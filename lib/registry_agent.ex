@@ -1,5 +1,6 @@
 defmodule Relocker.Registry.Agent do
   use GenServer
+  use Timex
 
   @behaviour Relocker.Registry
 
@@ -13,13 +14,13 @@ defmodule Relocker.Registry.Agent do
     end, name: __MODULE__)
   end
 
-  def lock(name, lease_time_secs, metadata, time) do
+  def lock(name, metadata, lease_time_secs, time) do
     Agent.get_and_update(__MODULE__, fn state ->
 
       case read(state, name, time) do
         :error -> 
           lock = %Lock{name: name, secret: Utils.random_string(32), metadata: metadata, valid_until: secs(time) + lease_time_secs}
-          state = HashDict.put(name, lock)
+          state = HashDict.put(state, name, lock)
           {{:ok, lock}, state}
         _any ->
           {:error, state}
@@ -29,12 +30,19 @@ defmodule Relocker.Registry.Agent do
   end
 
   def read(name, time) do
-    Agent.get(__MODULE__, fn state -> read(state, name, time) end)
+    Agent.get(__MODULE__, fn state -> 
+      case read(state, name, time) do
+        :error -> 
+          :error
+        lock ->
+          {:ok, lock}
+      end
+    end)
   end
 
   def extend(%Lock{} = lock, time) do
     Agent.get_and_update(__MODULE__, fn state ->
-      result = if HashDict.has_key? lock.name do
+      result = if HashDict.has_key? state, lock.name do
         if secs(time) <= lock.valid_until do
           :ok
         else
@@ -49,7 +57,7 @@ defmodule Relocker.Registry.Agent do
 
   def unlock(%Lock{} = lock, time) do
     Agent.get_and_update(__MODULE__, fn state ->
-      result = if HashDict.has_key? lock.name do
+      result = if HashDict.has_key? state, lock.name do
         entry = HashDict.get state, lock.name
         if entry.secret == lock.secret and secs(time) <= lock.valid_until do
           :ok
@@ -64,9 +72,9 @@ defmodule Relocker.Registry.Agent do
   end
 
   defp read(state, name, time) do
-    if HashDict.has_key? name do
-      lock = HashDict.get name
-      if lock.valid_until <= secs(time) do
+    if HashDict.has_key? state, name do
+      lock = HashDict.get state, name
+      if secs(time) <= lock.valid_until do
         lock
       else
         :error
@@ -76,6 +84,6 @@ defmodule Relocker.Registry.Agent do
     end
   end
 
-  defp secs(time), do: time |> Date.to_secs
+  defp secs(time), do: time |> Utils.secs
 
 end

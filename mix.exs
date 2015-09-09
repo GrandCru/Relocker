@@ -7,6 +7,7 @@ defmodule Relocker.Mixfile do
      elixir: "~> 1.0",
      build_embedded: Mix.env != :test,
      start_permanent: Mix.env != :test,
+     elixirc_paths: elixirc_paths(Mix.env),
      deps: deps]
   end
 
@@ -33,4 +34,8 @@ defmodule Relocker.Mixfile do
       {:exredis, ">= 0.1.1" }
     ]
   end
+
+  # Include some support code for :test
+  defp elixirc_paths(:test), do: ["lib", "test/support"]
+  defp elixirc_paths(_), do: ["lib"]
 end

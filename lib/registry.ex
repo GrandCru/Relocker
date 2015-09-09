@@ -5,11 +5,13 @@ defmodule Relocker.Registry do
 
   alias Relocker.Lock
 
+  @type lock_name :: binary | atom
+
   defcallback start_link(opts :: []) :: {:ok, pid}
   
-  defcallback lock(name :: binary, lease_time_secs :: integer, metadata :: any, time :: Date.t) :: {:ok, Lock.t} | :error
+  defcallback lock(name :: lock_name, metadata :: any, lease_time_secs :: integer, time :: Date.t) :: {:ok, Lock.t} | :error
 
-  defcallback read(name :: binary, time :: Date.t) :: {:ok, Lock.t} | :error
+  defcallback read(name :: lock_name, time :: Date.t) :: {:ok, Lock.t} | :error
   
   defcallback extend(lock :: Lock.t, time :: Date.t) :: :ok | :error
   
@@ -21,8 +23,12 @@ defmodule Relocker.Registry do
     impl.start_link(opts)
   end
 
-  def lock(name, lease_time_secs, metadata, time \\ Date.now) do
-    impl.lock name, lease_time_secs, metadata, time
+  def lock(name, metadata, lease_time_secs, time \\ Date.now) when (is_binary(name) or is_atom(name)) and is_integer(lease_time_secs) do
+    impl.lock name, metadata, lease_time_secs, time
+  end
+
+  def read(name, time \\ Date.now) do
+    impl.read name, time
   end
 
   def extend(%Lock{} = lock, time \\ Date.now) do
