@@ -52,9 +52,17 @@ defmodule RelockerTest do
     
     {:ok, lock} = Registry.lock :my_lock_name, %{some_metadata: 10}, @lease_time_secs, now
 
-    {:ok, _new_lock} = Registry.extend(lock, now)
+    now = Timex.Date.add(now, Time.to_timestamp(1, :secs))
+
+    {:ok, new_lock} = Registry.extend(lock, now)
 
     assert :error == Registry.extend(%{lock | :secret => "foo"}, now)
+
+    assert lock.valid_until == new_lock.valid_until - 1
+
+    now = Timex.Date.add(now, Time.to_timestamp(1 + @lease_time_secs, :secs))
+
+    assert :error == Registry.extend(lock, now)
 
     assert :error == Registry.extend(lock, TestUtils.time(4))
 
