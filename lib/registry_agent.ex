@@ -18,8 +18,8 @@ defmodule Relocker.Registry.Agent do
     Agent.get_and_update(__MODULE__, fn state ->
 
       case read(state, name, time) do
-        :error -> 
-          lock = %Lock{name: name, secret: Utils.random_string(32), metadata: metadata, valid_until: secs(time) + lease_time_secs}
+        :error ->
+          lock = %Lock{name: name, secret: Utils.random_string(32), metadata: metadata, valid_until: secs(time) + lease_time_secs, lease_time: lease_time_secs}
           state = HashDict.put(state, name, lock)
           {{:ok, lock}, state}
         _any ->
@@ -30,9 +30,9 @@ defmodule Relocker.Registry.Agent do
   end
 
   def read(name, time) do
-    Agent.get(__MODULE__, fn state -> 
+    Agent.get(__MODULE__, fn state ->
       case read(state, name, time) do
-        :error -> 
+        :error ->
           :error
         lock ->
           {:ok, lock}
@@ -42,15 +42,19 @@ defmodule Relocker.Registry.Agent do
 
   def extend(%Lock{} = lock, time) do
     Agent.get_and_update(__MODULE__, fn state ->
-      result = if HashDict.has_key? state, lock.name do
-        if secs(time) <= lock.valid_until do
-          :ok
-        else
-          :error
+      result =
+        case read(state, lock.name, time) do
+          :error ->
+            :error
+          my_lock ->
+            if secs(time) <= my_lock.valid_until and my_lock.secret == lock.secret do
+              lock = %{lock | :valid_until => secs(time) + lock.lease_time}
+              state = HashDict.put(state, lock.name, lock)
+              :ok
+            else
+              :error
+            end
         end
-      else
-        :error
-      end
       {result, state}
     end)
   end
@@ -73,7 +77,7 @@ defmodule Relocker.Registry.Agent do
   end
 
   def reset do
-    Agent.get_and_update(__MODULE__, fn _ -> 
+    Agent.get_and_update(__MODULE__, fn _ ->
       {:ok, HashDict.new}
     end)
   end

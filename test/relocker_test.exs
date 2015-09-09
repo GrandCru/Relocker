@@ -54,6 +54,8 @@ defmodule RelockerTest do
 
     assert :ok == Registry.extend(lock, now)
 
+    assert :error == Registry.extend(%{lock | :secret => "foo"}, now)
+
     assert :error == Registry.extend(lock, TestUtils.time(4))
 
   end
