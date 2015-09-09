@@ -52,7 +52,7 @@ defmodule RelockerTest do
     
     {:ok, lock} = Registry.lock :my_lock_name, %{some_metadata: 10}, @lease_time_secs, now
 
-    assert :ok == Registry.extend(lock, now)
+    {:ok, _new_lock} = Registry.extend(lock, now)
 
     assert :error == Registry.extend(%{lock | :secret => "foo"}, now)
 

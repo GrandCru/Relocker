@@ -50,7 +50,7 @@ defmodule Relocker.Registry.Agent do
             if secs(time) <= my_lock.valid_until and my_lock.secret == lock.secret do
               lock = %{lock | :valid_until => secs(time) + lock.lease_time}
               state = HashDict.put(state, lock.name, lock)
-              :ok
+              {:ok, lock}
             else
               :error
             end

@@ -13,7 +13,7 @@ defmodule Relocker.Registry do
 
   defcallback read(name :: lock_name, time :: Date.t) :: {:ok, Lock.t} | :error
   
-  defcallback extend(lock :: Lock.t, time :: Date.t) :: :ok | :error
+  defcallback extend(lock :: Lock.t, time :: Date.t) :: {:ok, Lock.t} | :error
   
   defcallback unlock(lock :: Lock.t, time :: Date.t) :: :ok | :error
 
