@@ -31,5 +31,7 @@ defmodule RelockerTest do
 
     assert new_lock.secret != lock.secret
 
+    :error = Registry.lock :my_lock_name, %{some_metadata: 10}, @lease_time_secs, TestUtils.time(1)
+
   end
 end
