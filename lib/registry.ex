@@ -17,6 +17,8 @@ defmodule Relocker.Registry do
   
   defcallback unlock(lock :: Lock.t, time :: Date.t) :: :ok | :error
 
+  defcallback reset() :: :ok | :error
+
   # Client
 
   def start_link(opts) do
@@ -37,6 +39,10 @@ defmodule Relocker.Registry do
 
   def unlock(%Lock{} = lock, time \\ Date.now) do
     impl.unlock lock, time
+  end
+
+  def reset do
+    impl.reset
   end
 
   def impl do

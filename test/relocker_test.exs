@@ -10,6 +10,8 @@ defmodule RelockerTest do
 
   test "lock/unlock" do
 
+    Registry.reset
+
     now = TestUtils.time(0)
     
     {:ok, lock} = Registry.lock :my_lock_name, %{some_metadata: 10}, @lease_time_secs, now
@@ -41,4 +43,19 @@ defmodule RelockerTest do
     assert :error == Registry.unlock new_lock, TestUtils.time(1)
 
   end
+
+  test "extend lease" do
+
+    Registry.reset
+
+    now = TestUtils.time(3)
+    
+    {:ok, lock} = Registry.lock :my_lock_name, %{some_metadata: 10}, @lease_time_secs, now
+
+    assert :ok == Registry.extend(lock, now)
+
+    assert :error == Registry.extend(lock, TestUtils.time(4))
+
+  end
+
 end

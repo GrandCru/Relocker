@@ -7,7 +7,7 @@ defmodule Relocker.Registry.Agent do
   alias Relocker.Lock
   alias Relocker.Utils
 
-  def start_link(opts) do
+  def start_link(_opts) do
     Agent.start_link(fn ->
       Utils.seed_random
       HashDict.new
@@ -69,6 +69,12 @@ defmodule Relocker.Registry.Agent do
         :error
       end
       {result, state}
+    end)
+  end
+
+  def reset do
+    Agent.get_and_update(__MODULE__, fn _ -> 
+      {:ok, HashDict.new}
     end)
   end
 
