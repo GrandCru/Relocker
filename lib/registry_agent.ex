@@ -60,6 +60,7 @@ defmodule Relocker.Registry.Agent do
       result = if HashDict.has_key? state, lock.name do
         entry = HashDict.get state, lock.name
         if entry.secret == lock.secret and secs(time) <= lock.valid_until do
+          state = HashDict.delete state, lock.name
           :ok
         else
           :error
