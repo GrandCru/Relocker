@@ -7,15 +7,19 @@ defmodule Relocker.Registry do
 
   defcallback start_link(opts :: []) :: {:ok, pid}
   
-  defcallback lock(name :: binary, lease_time_secs :: integer, metadata :: any, time :: Date.t) :: {:ok, Lock.t} || :error
+  defcallback lock(name :: binary, lease_time_secs :: integer, metadata :: any, time :: Date.t) :: {:ok, Lock.t} | :error
 
-  defcallback read(name :: binary, time :: Date.t) :: {:ok, Lock.t} || :error
+  defcallback read(name :: binary, time :: Date.t) :: {:ok, Lock.t} | :error
   
-  defcallback extend(lock :: Lock.t, time :: Date.t) :: :ok || :error
+  defcallback extend(lock :: Lock.t, time :: Date.t) :: :ok | :error
   
-  defcallback unlock(lock :: Lock.t, time :: Date.t) :: :ok || :error
+  defcallback unlock(lock :: Lock.t, time :: Date.t) :: :ok | :error
 
   # Client
+
+  def start_link(opts) do
+    impl.start_link(opts)
+  end
 
   def lock(name, lease_time_secs, metadata, time \\ Date.now) do
     impl.lock name, lease_time_secs, metadata, time
