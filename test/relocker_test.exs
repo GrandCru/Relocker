@@ -8,9 +8,17 @@ defmodule RelockerTest do
 
   @lease_time_secs 5
 
-  test "lock/unlock" do
+  setup_all do
+    Application.put_env(:relocker, :registry, Relocker.Registry.Agent)
+    :ok
+  end
 
+  setup do
     Registry.reset
+    :ok
+  end
+
+  test "lock/unlock" do
 
     now = TestUtils.time(0)
     
@@ -45,8 +53,6 @@ defmodule RelockerTest do
   end
 
   test "extend lease" do
-
-    Registry.reset
 
     now = TestUtils.time(3)
     

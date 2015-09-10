@@ -3,6 +3,7 @@ defmodule Relocker.Registry.Redis do
   use Timex
 
   import Exredis
+  import Exredis.Script
 
   @behaviour Relocker.Registry
 
@@ -11,8 +12,8 @@ defmodule Relocker.Registry.Redis do
 
   # Client
 
-  def start_link(opts) do
-    GenServer.start_link(__MODULE__, opts, name: __MODULE__)_)
+  def start_link(opts \\ []) do
+    GenServer.start_link(__MODULE__, opts, name: __MODULE__)
   end
 
   def lock(name, metadata, lease_time_secs, time) do
@@ -35,10 +36,15 @@ defmodule Relocker.Registry.Redis do
     GenServer.call(__MODULE__, :reset)
   end
 
+  def stop do
+    GenServer.cast(__MODULE__, :stop)
+  end
+
   # GenServer
 
   def init(_opts) do
     connection_string = Application.get_env(:relocker, :redis)
+    Utils.seed_random
     redis = Exredis.start_using_connection_string connection_string
     {:ok, %{:redis => redis}}
   end
@@ -48,16 +54,88 @@ defmodule Relocker.Registry.Redis do
     lock = %Lock{name: name, secret: Utils.random_string(32), metadata: metadata, valid_until: secs(time) + lease_time_secs, lease_time: lease_time_secs}
     
     case query(state.redis, ["SET", redis_key(name), lock.secret, "NX", "EX", lease_time_secs]) do
-
+      "OK" -> 
+        state.redis |> query ["SET", redis_key_meta(name), :erlang.term_to_binary(lock), "EX", lease_time_secs]
+        {:reply, {:ok, lock}, state}
+      _ ->
+        {:reply, :error, state}
     end
 
   end
 
-  def read_lock()
+  def handle_call({:read, name, time}, _from, state) do
+    case query(state.redis, ["GET", redis_key(name)]) do
+      nil -> 
+        {:reply, :error, state}
+      secret ->
+        lock = state.redis |> query(["GET", redis_key_meta(name)]) |> decode
+        if lock.secret == secret and secs(time) <= lock.valid_until do
+          {:reply, {:ok, lock}, state}
+        else
+          {:reply, :error, state}
+        end
+    end
+  end
 
+  def handle_call({:extend, lock, time}, _from, state) do
+    valid_until = secs(time) + lock.lease_time
+    case extend_lock(state.redis, [redis_key(lock.name)], [lock.secret, valid_until]) do
+      "OK" ->
+        state.redis |> query ["SET", redis_key_meta(lock.name), :erlang.term_to_binary(lock), "EX", lock.lease_time]
+        {:reply, {:ok, lock}, state}
+      _ ->
+        {:reply, :error, state}
+    end
+  end
+
+  def handle_call({:unlock, lock, _time}, _from, state) do
+    res = delete_lock(state.redis, [redis_key(lock.name)], [lock.secret])
+    case res do
+      "1" -> 
+        {:reply, :ok, state}
+      _ ->
+        {:reply, :error, state}
+    end
+  end
+ 
+  def handle_call(:reset, _from, state) do
+    keys = state.redis |> query ["KEYS", "relock:*"]
+    state.redis |> query ["DEL"] ++ keys
+    {:reply, :ok, state}    
+  end
+
+  def handle_cast(:stop, state) do
+    Exredis.stop state.redis
+    {:stop, :normal, state}
+  end
+
+  defredis_script :extend_lock, """
+    if redis.call("get",KEYS[1]) == ARGV[1] then
+        return redis.call("set", KEYS[1], ARGV[1], "EX", ARGV[2])
+    else
+        return 0
+    end
+  """
+
+  defredis_script :delete_lock, """
+    if redis.call("get",KEYS[1]) == ARGV[1] then
+        return redis.call("del", KEYS[1])
+    else
+        return 0
+    end
+  """
 
   defp redis_key(name) when is_atom(name), do: name |> Atom.to_string |> redis_key
-  defp redis_key(name) when is_string(name), do: "relock:#{name}"
+  defp redis_key(name) when is_binary(name), do: "relock:l:#{name}"
 
+  defp redis_key_meta(name) when is_atom(name), do: name |> Atom.to_string |> redis_key_meta
+  defp redis_key_meta(name) when is_binary(name), do: "relock:m:#{name}"
+
+  defp secs(time), do: Utils.secs(time)
+
+  defp decode(bin) do
+    lock = :erlang.binary_to_term(bin)
+    put_in(lock.secret, to_string(lock.secret))
+  end
 
 end

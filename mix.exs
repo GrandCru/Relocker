@@ -31,7 +31,7 @@ defmodule Relocker.Mixfile do
   defp deps do
     [
       {:timex, "~> 0.13.3"},
-      {:exredis, ">= 0.1.1" }
+      {:exredis, ">= 0.2.0" }
     ]
   end
 

@@ -24,4 +24,5 @@ use Mix.Config
 # import_config "#{Mix.env}.exs"
 
 config :relocker,
-  registry: Relocker.Registry.Agent
+  registry: Relocker.Registry.Agent,
+  redis: "redis://192.168.33.11:6379"
