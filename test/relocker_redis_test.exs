@@ -25,6 +25,7 @@ defmodule RelockerRedis do
     now = TestUtils.time(0)
     
     {:ok, lock} = Registry.lock :my_lock_name, %{some_metadata: 10}, @lease_time_secs, now
+    :error = Registry.lock :my_lock_name, %{some_metadata: 10}, @lease_time_secs, now
 
     assert lock.name === :my_lock_name
     assert lock.valid_until == Utils.secs(now) + @lease_time_secs
@@ -39,6 +40,8 @@ defmodule RelockerRedis do
 
     assert :error == Registry.read :my_lock_name, TestUtils.time(1)
 
+    assert :error == Registry.unlock(put_in(lock.secret, "lollers"))
+
     assert :ok == Registry.unlock(lock)
     assert :error == Registry.unlock(lock)
 
@@ -49,6 +52,28 @@ defmodule RelockerRedis do
     assert new_lock.secret != lock.secret
 
     assert :ok == Registry.unlock(new_lock)
+
+  end
+
+  test "extend lease" do
+
+    now = TestUtils.time(3)
+    
+    {:ok, lock} = Registry.lock :my_lock_name, %{some_metadata: 10}, @lease_time_secs, now
+
+    now = Timex.Date.add(now, Time.to_timestamp(1, :secs))
+
+    {:ok, new_lock} = Registry.extend(lock, now)
+
+    assert :error == Registry.extend(%{lock | :secret => "foo"}, now)
+
+    assert lock.valid_until == new_lock.valid_until - 1
+
+    now = Timex.Date.add(now, Time.to_timestamp(1 + @lease_time_secs, :secs))
+
+    assert :error == Registry.extend(lock, now)
+
+    assert :error == Registry.extend(lock, TestUtils.time(4))
 
   end
 
