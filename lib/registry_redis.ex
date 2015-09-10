@@ -79,8 +79,10 @@ defmodule Relocker.Registry.Redis do
 
   def handle_call({:extend, lock, time}, _from, state) do
     valid_until = secs(time) + lock.lease_time
-    case extend_lock(state.redis, [redis_key(lock.name)], [lock.secret, valid_until]) do
+    res = extend_lock(state.redis, [redis_key(lock.name)], [lock.secret, lock.lease_time])
+    case res do
       "OK" ->
+        lock = put_in(lock.valid_until, secs(time) + lock.lease_time)
         state.redis |> query ["SET", redis_key_meta(lock.name), :erlang.term_to_binary(lock), "EX", lock.lease_time]
         {:reply, {:ok, lock}, state}
       _ ->
