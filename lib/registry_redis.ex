@@ -128,16 +128,20 @@ defmodule Relocker.Registry.Redis do
   """
 
   defp redis_key(name) when is_atom(name), do: name |> Atom.to_string |> redis_key
-  defp redis_key(name) when is_binary(name), do: "relock:l:#{name}"
+  defp redis_key(name) when is_binary(name), do: "relock:#{scope}:l:#{name}"
 
   defp redis_key_meta(name) when is_atom(name), do: name |> Atom.to_string |> redis_key_meta
-  defp redis_key_meta(name) when is_binary(name), do: "relock:m:#{name}"
+  defp redis_key_meta(name) when is_binary(name), do: "relock:#{scope}:m:#{name}"
 
   defp secs(time), do: Utils.secs(time)
 
   defp decode(bin) do
     lock = :erlang.binary_to_term(bin)
     put_in(lock.secret, to_string(lock.secret))
+  end
+
+  defp scope do
+    Application.get_env(:relock, :key_scope, "scope")
   end
 
 end
