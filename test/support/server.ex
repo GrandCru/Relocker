@@ -9,6 +9,10 @@ defmodule Relocker.Test.NamedServer do
     {:ok, %{}}
   end
 
+  def handle_cast(:stop, state) do
+    {:stop, :normal, state}
+  end
+ 
   def handle_info(info, state) do
     Logger.debug "info = #{info}"
     {:noreply, state}

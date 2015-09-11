@@ -28,6 +28,12 @@ defmodule RelockerServerTest do
 
     assert pid == ProcessRegistry.whereis_name "my_little_server"
 
+    GenServer.cast(pid, :stop)
+
+    :timer.sleep 100
+
+    assert :undefined == ProcessRegistry.whereis_name "my_little_server"
+
   end
 
 end
