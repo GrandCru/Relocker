@@ -1,6 +1,5 @@
 defmodule RelockerRedis do
   use ExUnit.Case
-  use Timex
 
   alias Relocker.Registry
   alias Relocker.Utils
@@ -28,22 +27,22 @@ defmodule RelockerRedis do
     :error = Registry.lock :my_lock_name, %{some_metadata: 10}, @lease_time_secs, now
 
     assert lock.name === :my_lock_name
-    assert lock.valid_until == Utils.secs(now) + @lease_time_secs
+    assert lock.valid_until == now + @lease_time_secs
     assert lock.metadata.some_metadata == 10
 
     {:ok, lock} = Registry.read :my_lock_name, now
 
     assert lock.name === :my_lock_name
-    assert lock.valid_until == Utils.secs(now) + @lease_time_secs
+    assert lock.valid_until == now + @lease_time_secs
 
     assert lock.metadata.some_metadata == 10
 
     assert :error == Registry.read :my_lock_name, TestUtils.time(1)
 
-    assert :error == Registry.unlock(put_in(lock.secret, "lollers"))
+    assert :error == Registry.unlock(put_in(lock.secret, "lollers"), TestUtils.time(1))
 
-    assert :ok == Registry.unlock(lock)
-    assert :error == Registry.unlock(lock)
+    assert :ok == Registry.unlock(lock, TestUtils.time(1))
+    assert :error == Registry.unlock(lock, TestUtils.time(1))
 
     assert :error == Registry.read :my_lock_name, TestUtils.time(0)
 
@@ -51,7 +50,7 @@ defmodule RelockerRedis do
 
     assert new_lock.secret != lock.secret
 
-    assert :ok == Registry.unlock(new_lock)
+    assert :ok == Registry.unlock(new_lock, TestUtils.time(1))
 
   end
 
@@ -61,7 +60,7 @@ defmodule RelockerRedis do
     
     {:ok, lock} = Registry.lock :my_lock_name, %{some_metadata: 10}, @lease_time_secs, now
 
-    now = Timex.Date.add(now, Time.to_timestamp(1, :secs))
+    now = now + 1
 
     assert :error == Registry.extend(%{lock | :secret => "foo"}, now)
 

@@ -1,9 +1,7 @@
 defmodule Relocker.Test.Utils do
 
-  use Timex
-
-  def time(hour, min \\ "00") do
-    DateFormat.parse! "2015-06-14T0#{hour}:#{min}:00Z", "{ISOz}"
+  def time(hour, min \\ 0) do
+    323568000 + hour * 60 + min
   end
 
 end

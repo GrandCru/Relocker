@@ -1,6 +1,5 @@
 defmodule Relocker.Registry.Agent do
   use GenServer
-  use Timex
 
   @behaviour Relocker.Registry
 
@@ -19,7 +18,7 @@ defmodule Relocker.Registry.Agent do
 
       case read(state, name, time) do
         :error ->
-          lock = %Lock{name: name, secret: Utils.random_string(32), metadata: metadata, valid_until: secs(time) + lease_time_secs, lease_time: lease_time_secs}
+          lock = %Lock{name: name, secret: Utils.random_string(32), metadata: metadata, valid_until: time + lease_time_secs, lease_time: lease_time_secs}
           state = HashDict.put(state, name, lock)
           {{:ok, lock}, state}
         _any ->
@@ -47,8 +46,8 @@ defmodule Relocker.Registry.Agent do
           :error ->
             :error
           my_lock ->
-            if secs(time) <= my_lock.valid_until and my_lock.secret == lock.secret do
-              lock = %{lock | :valid_until => secs(time) + lock.lease_time}
+            if time <= my_lock.valid_until and my_lock.secret == lock.secret do
+              lock = %{lock | :valid_until => time + lock.lease_time}
               state = HashDict.put(state, lock.name, lock)
               {:ok, lock}
             else
@@ -63,7 +62,7 @@ defmodule Relocker.Registry.Agent do
     Agent.get_and_update(__MODULE__, fn state ->
       result = if HashDict.has_key? state, lock.name do
         entry = HashDict.get state, lock.name
-        if entry.secret == lock.secret and secs(time) <= lock.valid_until do
+        if entry.secret == lock.secret and time <= lock.valid_until do
           state = HashDict.delete state, lock.name
           :ok
         else
@@ -85,7 +84,7 @@ defmodule Relocker.Registry.Agent do
   defp read(state, name, time) do
     if HashDict.has_key? state, name do
       lock = HashDict.get state, name
-      if secs(time) <= lock.valid_until do
+      if time <= lock.valid_until do
         lock
       else
         :error
@@ -94,7 +93,5 @@ defmodule Relocker.Registry.Agent do
       :error
     end
   end
-
-  defp secs(time), do: time |> Utils.secs
 
 end

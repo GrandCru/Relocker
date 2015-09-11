@@ -1,7 +1,5 @@
 defmodule Relocker.Utils do
 
-  use Timex
-
   def seed_random() do
     <<a::32, b::32, c::32>> = :crypto.rand_bytes(12)
     :random.seed(a, b, c)
@@ -18,7 +16,5 @@ defmodule Relocker.Utils do
     chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
     :lists.nth(:random.uniform(:erlang.length(chars)), chars)
   end
-
-  def secs(%Timex.DateTime{} = time), do: time |> Date.to_secs
 
 end

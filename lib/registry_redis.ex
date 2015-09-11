@@ -1,6 +1,5 @@
 defmodule Relocker.Registry.Redis do
   use GenServer
-  use Timex
 
   import Exredis
   import Exredis.Script
@@ -51,7 +50,7 @@ defmodule Relocker.Registry.Redis do
 
   def handle_call({:lock, name, metadata, lease_time_secs, time}, _from, state) do
 
-    lock = %Lock{name: name, secret: Utils.random_string(32), metadata: metadata, valid_until: secs(time) + lease_time_secs, lease_time: lease_time_secs}
+    lock = %Lock{name: name, secret: Utils.random_string(32), metadata: metadata, valid_until: time + lease_time_secs, lease_time: lease_time_secs}
     
     case query(state.redis, ["SET", redis_key(name), lock.secret, "NX", "EX", lease_time_secs]) do
       "OK" -> 
@@ -69,7 +68,7 @@ defmodule Relocker.Registry.Redis do
         {:reply, :error, state}
       secret ->
         lock = state.redis |> query(["GET", redis_key_meta(name)]) |> decode
-        if lock.secret == secret and secs(time) <= lock.valid_until do
+        if lock.secret == secret and time <= lock.valid_until do
           {:reply, {:ok, lock}, state}
         else
           {:reply, :error, state}
@@ -78,11 +77,11 @@ defmodule Relocker.Registry.Redis do
   end
 
   def handle_call({:extend, lock, time}, _from, state) do
-    valid_until = secs(time) + lock.lease_time
+    valid_until = time + lock.lease_time
     res = extend_lock(state.redis, [redis_key(lock.name)], [lock.secret, lock.lease_time])
     case res do
       "OK" ->
-        lock = put_in(lock.valid_until, secs(time) + lock.lease_time)
+        lock = put_in(lock.valid_until, time + lock.lease_time)
         state.redis |> query ["SET", redis_key_meta(lock.name), :erlang.term_to_binary(lock), "EX", lock.lease_time]
         {:reply, {:ok, lock}, state}
       _ ->
@@ -133,7 +132,7 @@ defmodule Relocker.Registry.Redis do
   defp redis_key_meta(name) when is_atom(name), do: name |> Atom.to_string |> redis_key_meta
   defp redis_key_meta(name) when is_binary(name), do: "relock:#{scope}:m:#{name}"
 
-  defp secs(time), do: Utils.secs(time)
+  defp time, do: Utils.time
 
   defp decode(bin) do
     lock = :erlang.binary_to_term(bin)

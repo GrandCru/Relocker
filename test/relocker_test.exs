@@ -1,6 +1,5 @@
 defmodule RelockerTest do
   use ExUnit.Case
-  use Timex
 
   alias Relocker.Registry
   alias Relocker.Utils
@@ -25,13 +24,13 @@ defmodule RelockerTest do
     {:ok, lock} = Registry.lock :my_lock_name, %{some_metadata: 10}, @lease_time_secs, now
 
     assert lock.name === :my_lock_name
-    assert lock.valid_until == Utils.secs(now) + @lease_time_secs
+    assert lock.valid_until == now + @lease_time_secs
     assert lock.metadata.some_metadata == 10
 
     {:ok, lock} = Registry.read :my_lock_name, now
 
     assert lock.name === :my_lock_name
-    assert lock.valid_until == Utils.secs(now) + @lease_time_secs
+    assert lock.valid_until == now + @lease_time_secs
 
     assert lock.metadata.some_metadata == 10
 
@@ -58,7 +57,7 @@ defmodule RelockerTest do
     
     {:ok, lock} = Registry.lock :my_lock_name, %{some_metadata: 10}, @lease_time_secs, now
 
-    now = Timex.Date.add(now, Time.to_timestamp(1, :secs))
+    now = now + 1
 
     {:ok, new_lock} = Registry.extend(lock, now)
 
@@ -66,7 +65,7 @@ defmodule RelockerTest do
 
     assert lock.valid_until == new_lock.valid_until - 1
 
-    now = Timex.Date.add(now, Time.to_timestamp(1 + @lease_time_secs, :secs))
+    now = now + 1 + @lease_time_secs
 
     assert :error == Registry.extend(lock, now)
 
