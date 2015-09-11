@@ -2,7 +2,6 @@ defmodule RelockerRedis do
   use ExUnit.Case
 
   alias Relocker.Registry
-  alias Relocker.Utils
   alias Relocker.Test.Utils, as: TestUtils
 
   @moduletag :redis

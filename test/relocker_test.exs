@@ -2,7 +2,6 @@ defmodule RelockerTest do
   use ExUnit.Case
 
   alias Relocker.Registry
-  alias Relocker.Utils
   alias Relocker.Test.Utils, as: TestUtils
 
   @lease_time_secs 5
