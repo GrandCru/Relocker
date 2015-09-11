@@ -5,6 +5,8 @@ defmodule Relocker.Registry do
   alias Relocker.Lock
 
   @type lock_name :: binary | atom
+
+  defcallback start_link(opts :: []) :: {:ok, pid}
   
   defcallback lock(name :: lock_name, metadata :: any, lease_time_secs :: integer, time :: integer) :: {:ok, Lock.t} | :error
 
