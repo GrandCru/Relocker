@@ -1,23 +1,25 @@
 defmodule Relocker.ProcessRegistry do
 
   alias Relocker.Registry
+  alias Relocker.Utils
 
-  @lock_lease_length 5
-  @lock_lease_treshold 2
+  require Logger
 
   @doc """
   Registers the given `pid` to a `name` globally.
   """
   @spec register_name(any, pid) :: :yes | :no
   def register_name(name, pid) do
-    case Registry.lock(name, %{pid: pid, node: node}, @lease_time_secs, Utils.time) do
+    case Registry.lock(name, %{pid: pid, node: node}, 5, Utils.time) do
       {:ok, lock} ->
         if pid == self do
           Process.put(:'$relock_lock', lock)
         end
-        Process.send(pid, {:'$relock_extend', lock, Utils.time}, @lock_lease_length - @lock_lease_treshold)
+        Process.send_after(pid, {:'$relock_extend', lock}, 1000)
+        Logger.debug "Registered #{inspect name} for #{inspect pid}"
         :yes
       :error ->
+        Logger.warn "Unable to register #{inspect name} for pid #{inspect pid}"
         :no
     end
   end
@@ -29,7 +31,7 @@ defmodule Relocker.ProcessRegistry do
   def whereis_name(name) do
     case Registry.read(name, Utils.time) do
       {:ok, lock} ->
-        lock.pid
+        lock.metadata.pid
       :error ->
         :undefined
     end
@@ -54,6 +56,7 @@ defmodule Relocker.ProcessRegistry do
   @spec unregister :: any
   def unregister do
     lock = Process.get(:'$relock_lock')
+    Logger.debug "unregister #{inspect lock}"
     Registry.unlock(lock, Utils.time) 
   end
 

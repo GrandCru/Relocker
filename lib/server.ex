@@ -1,9 +1,9 @@
 defmodule Relocker.Server do
-  ~s"""
+
   @doc false
   defmacro __using__(options) do
-    lease_length    = Keyword.get(options, :lease_length, 5000)
-    lease_threshold = Keyword.get(options, :lease_threshold, 500)
+    lease_length    = Keyword.get(options, :lease_length, 5)
+    lease_threshold = Keyword.get(options, :lease_threshold, 1)
     
     quote do
       @lease_length    unquote(lease_length)
@@ -14,7 +14,7 @@ defmodule Relocker.Server do
       def start(args, opts \\ []) do
         name = Keyword.get(opts, :name)
         if name != nil do
-          opts = Keyword.put(opts, :name, {:via, Locker.Registry, name})
+          opts = Keyword.put(opts, :name, {:via, Relocker.ProcessRegistry, name})
           args = Keyword.put(args, :name, name)
         end
         GenServer.start(__MODULE__, args, opts)
@@ -23,7 +23,7 @@ defmodule Relocker.Server do
       def start_link(args, opts \\ []) do
         name = Keyword.get(opts, :name)
         if name != nil do
-          opts = Keyword.put(opts, :name, {:via, Locker.Registry, name})
+          opts = Keyword.put(opts, :name, {:via, Relocker.ProcessRegistry, name})
           args = Keyword.put(args, :name, name)
         end
         GenServer.start_link(__MODULE__, args, opts)
@@ -31,21 +31,26 @@ defmodule Relocker.Server do
       
       # GenServer API
       
-      def handle_info({:'$locker_extend_lease', key, value}, state) do
-        case :locker.extend_lease(key, value, @lease_length) do
-          :ok ->
+      def handle_info({:'$relock_extend', lock}, state) do
+        case Relocker.Registry.extend(lock, Relocker.Utils.time) do
+          {:ok, lock} ->
+            Process.put(:'$relock_lock', lock)
             # schedule new lock lease extend
-            Process.send_after(self,
-                               {:'$locker_extend_lease', key, value},
-                               @lease_length - @lease_threshold)
+            Process.send_after(self, {:'$relock_extend', lock}, (@lease_length - @lease_threshold) * 1000)
             {:noreply, state}
           error ->
             {:stop, error, state}
         end
       end
+
+      def init(_) do
+        Process.flag(:trap_exit, true)
+      end
       
+      defoverridable [init: 1]
+
       def terminate(_reason, _state) do
-        Locker.Registry.unregister
+        Relocker.ProcessRegistry.unregister
         :ok
       end
       
@@ -53,5 +58,5 @@ defmodule Relocker.Server do
       
     end
   end
-  """
+
 end
