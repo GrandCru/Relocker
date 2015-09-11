@@ -77,7 +77,6 @@ defmodule Relocker.Registry.Redis do
   end
 
   def handle_call({:extend, lock, time}, _from, state) do
-    valid_until = time + lock.lease_time
     res = extend_lock(state.redis, [redis_key(lock.name)], [lock.secret, lock.lease_time])
     case res do
       "OK" ->
@@ -131,8 +130,6 @@ defmodule Relocker.Registry.Redis do
 
   defp redis_key_meta(name) when is_atom(name), do: name |> Atom.to_string |> redis_key_meta
   defp redis_key_meta(name) when is_binary(name), do: "relock:#{scope}:m:#{name}"
-
-  defp time, do: Utils.time
 
   defp decode(bin) do
     lock = :erlang.binary_to_term(bin)
