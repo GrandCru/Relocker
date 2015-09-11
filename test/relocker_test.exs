@@ -8,6 +8,7 @@ defmodule RelockerTest do
 
   setup_all do
     Application.put_env(:relocker, :registry, Relocker.Registry.Agent)
+    {:ok, _pid} = Relocker.Registry.Agent.start_link
     :ok
   end
 

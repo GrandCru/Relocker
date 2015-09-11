@@ -6,7 +6,7 @@ defmodule Relocker.Registry.Agent do
   alias Relocker.Lock
   alias Relocker.Utils
 
-  def start_link(_opts) do
+  def start_link(_opts \\ []) do
     Agent.start_link(fn ->
       Utils.seed_random
       HashDict.new
