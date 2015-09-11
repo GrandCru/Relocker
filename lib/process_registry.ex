@@ -1,16 +1,9 @@
 defmodule Relocker.ProcessRegistry do
 
-  use Behaviour
-
   alias Relocker.Registry
 
   @lock_lease_length 5
   @lock_lease_treshold 2
-
-  @doc """
-  Sends a message to the given `name`.
-  """
-  defcallback send(name :: any, msg :: any) :: :ok | {:badarg, {any, any}}
 
   @doc """
   Registers the given `pid` to a `name` globally.
@@ -65,16 +58,12 @@ defmodule Relocker.ProcessRegistry do
   end
 
   def send(name, msg) do
-    impl.send(name, msg)
-  end
-
-  def impl do
-    case Application.get_env(:relocker, :process_registry) do
-      nil ->
-        raise "No process registry backend defined! Please check config.exs of this library to learn how to do it."
-      module ->
-        module
+    pid = Relocker.ProcessRegistry.whereis_name(name)
+    if pid != :undefined do
+      Kernel.send(pid, msg)
+    else
+      {:badarg, {name, msg}}
     end
-  end
+  end 
 
 end
