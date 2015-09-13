@@ -46,7 +46,6 @@ defmodule Relocker.Locker.Redis do
     if connection_string == nil do
       raise "No redis connection string defined! Please add `:relocker, :redis, \"redis:://<address>:<port>\"` to the application configuration."
     end
-    Utils.seed_random
     redis = Exredis.start_using_connection_string connection_string
     {:ok, %{:redis => redis}}
   end

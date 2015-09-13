@@ -15,11 +15,8 @@ defmodule RelockerRedis do
     :ok
   end
 
-  setup do
-    Locker.reset
-  end
-
   test "lock/unlock" do
+    Locker.reset
 
     now = TestUtils.time(0)
 
@@ -55,6 +52,7 @@ defmodule RelockerRedis do
   end
 
   test "extend lease" do
+    Locker.reset
 
     now = TestUtils.time(3)
 

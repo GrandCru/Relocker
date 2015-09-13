@@ -8,7 +8,6 @@ defmodule Relocker.Locker.Agent do
 
   def start_link(_opts) do
     Agent.start_link(fn ->
-      Utils.seed_random
       HashDict.new
     end, name: __MODULE__)
   end
