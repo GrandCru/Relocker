@@ -41,8 +41,8 @@ defmodule Relocker.Locker.Redis do
 
   # GenServer
 
-  def init(_opts) do
-    connection_string = Application.get_env(:relocker, :redis)
+  def init(opts) do
+    connection_string = Application.get_env(:relocker, :redis) || Keyword.get(opts, :redis, nil)
     if connection_string == nil do
       raise "No redis connection string defined! Please add `:relocker, :redis, \"redis:://<address>:<port>\"` to the application configuration."
     end

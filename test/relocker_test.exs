@@ -1,22 +1,14 @@
 defmodule RelockerTest do
-  use ExUnit.Case
+  use ExUnit.Case, async: false
 
-  alias Relocker.Locker
+  alias Relocker.Locker.Agent, as: Locker
   alias Relocker.Test.Utils, as: TestUtils
 
   @lease_time_secs 5
 
-  setup_all do
-    Application.put_env(:relocker, :locker, Relocker.Locker.Agent)
-    :ok
-  end
-
-  setup do
-    Locker.reset
-    :ok
-  end
-
   test "lock/unlock" do
+
+    Locker.reset
 
     now = TestUtils.time(0)
 
@@ -51,6 +43,8 @@ defmodule RelockerTest do
   end
 
   test "extend lease" do
+
+    Locker.reset
 
     now = TestUtils.time(3)
 

@@ -1,28 +1,13 @@
 defmodule RelockerServerTest do
-  use ExUnit.Case
+  use ExUnit.Case, async: false
 
-  alias Relocker.Locker
   alias Relocker.Registry
 
   alias Relocker.Test.NamedServer
 
-  @lease_time_secs 5
-
-  setup_all do
-    Application.put_env(:relocker, :registry, Relocker.Locker.Agent)
-    :ok
-  end
-
-  setup do
-    Locker.reset
-    :ok
-  end
-
-  setup do
-    Locker.reset
-  end
-
   test "start" do
+
+    Application.put_env(:relocker, :locker, Relocker.Locker.Agent)
 
     {:ok, pid} = NamedServer.start_link([], name: "my_little_server")
 

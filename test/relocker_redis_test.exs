@@ -1,7 +1,7 @@
 defmodule RelockerRedis do
-  use ExUnit.Case
+  use ExUnit.Case, async: false
 
-  alias Relocker.Locker
+  alias Relocker.Locker.Redis, as: Locker
   alias Relocker.Test.Utils, as: TestUtils
 
   @moduletag :redis
@@ -9,9 +9,7 @@ defmodule RelockerRedis do
   @lease_time_secs 5
 
   setup_all do
-    Application.put_env(:relocker, :locker, Relocker.Locker.Redis)
-    Application.put_env(:relocker, :redis, "redis://192.168.33.11:6379")
-    {:ok, _pid} = Relocker.Locker.Redis.start_link
+    {:ok, _pid} = Relocker.Locker.Redis.start_link redis: "redis://192.168.33.11:6379"
     :ok
   end
 
