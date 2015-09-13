@@ -36,7 +36,7 @@ defmodule Relocker.Registry do
         :undefined
     end
   end
-  
+
   @doc """
   Unregisters the given `name`.
   """
@@ -49,7 +49,7 @@ defmodule Relocker.Registry do
         :undefined
     end
   end
-  
+
   @doc """
   Unregisters the calling process.
   """
@@ -57,7 +57,7 @@ defmodule Relocker.Registry do
   def unregister do
     lock = Process.get(:'$relock_lock')
     Logger.debug "unregister #{inspect lock}"
-    Locker.unlock(lock, Utils.time) 
+    Locker.unlock(lock, Utils.time)
   end
 
   def send(name, msg) do
@@ -67,6 +67,6 @@ defmodule Relocker.Registry do
     else
       {:badarg, {name, msg}}
     end
-  end 
+  end
 
 end

@@ -9,7 +9,8 @@ defmodule RelockerRedis do
   @lease_time_secs 5
 
   setup_all do
-    Application.put_env(:relocker, :Locker, Relocker.Locker.Redis)
+    Application.put_env(:relocker, :locker, Relocker.Locker.Redis)
+    Application.put_env(:relocker, :redis, "redis://192.168.33.11:6379")
     {:ok, _pid} = Relocker.Locker.Redis.start_link
     :ok
   end
@@ -21,7 +22,7 @@ defmodule RelockerRedis do
   test "lock/unlock" do
 
     now = TestUtils.time(0)
-    
+
     {:ok, lock} = Locker.lock :my_lock_name, %{some_metadata: 10}, @lease_time_secs, now
     :error = Locker.lock :my_lock_name, %{some_metadata: 10}, @lease_time_secs, now
 
@@ -56,7 +57,7 @@ defmodule RelockerRedis do
   test "extend lease" do
 
     now = TestUtils.time(3)
-    
+
     {:ok, lock} = Locker.lock :my_lock_name, %{some_metadata: 10}, @lease_time_secs, now
 
     now = now + 1

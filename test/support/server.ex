@@ -1,6 +1,6 @@
 defmodule Relocker.Test.NamedServer do
-	
-	use Relocker.Server
+
+  use Relocker.Server
   require Logger
 
   def init(opts) do
@@ -8,7 +8,7 @@ defmodule Relocker.Test.NamedServer do
     Logger.debug "NamedServer starts"
     {:ok, %{}}
   end
- 
+
   def handle_info(info, state) do
     Logger.debug "info = #{info}"
     {:stop, :normal, state}

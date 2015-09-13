@@ -19,7 +19,7 @@ defmodule RelockerTest do
   test "lock/unlock" do
 
     now = TestUtils.time(0)
-    
+
     {:ok, lock} = Locker.lock :my_lock_name, %{some_metadata: 10}, @lease_time_secs, now
 
     assert lock.name === :my_lock_name
@@ -53,7 +53,7 @@ defmodule RelockerTest do
   test "extend lease" do
 
     now = TestUtils.time(3)
-    
+
     {:ok, lock} = Locker.lock :my_lock_name, %{some_metadata: 10}, @lease_time_secs, now
 
     now = now + 1

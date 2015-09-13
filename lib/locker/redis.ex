@@ -43,6 +43,9 @@ defmodule Relocker.Locker.Redis do
 
   def init(_opts) do
     connection_string = Application.get_env(:relocker, :redis)
+    if connection_string == nil do
+      raise "No redis connection string defined! Please add `:relocker, :redis, \"redis:://<address>:<port>\"` to the application configuration."
+    end
     Utils.seed_random
     redis = Exredis.start_using_connection_string connection_string
     {:ok, %{:redis => redis}}
@@ -51,9 +54,9 @@ defmodule Relocker.Locker.Redis do
   def handle_call({:lock, name, metadata, lease_time_secs, time}, _from, state) do
 
     lock = %Lock{name: name, secret: Utils.random_string(32), metadata: metadata, valid_until: time + lease_time_secs, lease_time: lease_time_secs}
-    
+
     case query(state.redis, ["SET", redis_key(name), lock.secret, "NX", "EX", lease_time_secs]) do
-      "OK" -> 
+      "OK" ->
         state.redis |> query ["SET", redis_key_meta(name), :erlang.term_to_binary(lock), "EX", lease_time_secs]
         {:reply, {:ok, lock}, state}
       _ ->
@@ -64,7 +67,7 @@ defmodule Relocker.Locker.Redis do
 
   def handle_call({:read, name, time}, _from, state) do
     case query(state.redis, ["GET", redis_key(name)]) do
-      nil -> 
+      nil ->
         {:reply, :error, state}
       secret ->
         lock = state.redis |> query(["GET", redis_key_meta(name)]) |> decode
@@ -91,17 +94,17 @@ defmodule Relocker.Locker.Redis do
   def handle_call({:unlock, lock, _time}, _from, state) do
     res = delete_lock(state.redis, [redis_key(lock.name)], [lock.secret])
     case res do
-      "1" -> 
+      "1" ->
         {:reply, :ok, state}
       _ ->
         {:reply, :error, state}
     end
   end
- 
+
   def handle_call(:reset, _from, state) do
     keys = state.redis |> query ["KEYS", "relock:*"]
     state.redis |> query ["DEL"] ++ keys
-    {:reply, :ok, state}    
+    {:reply, :ok, state}
   end
 
   def handle_cast(:stop, state) do

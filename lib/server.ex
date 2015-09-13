@@ -4,7 +4,7 @@ defmodule Relocker.Server do
   defmacro __using__(options) do
     lease_length    = Keyword.get(options, :lease_length, 5)
     lease_threshold = Keyword.get(options, :lease_threshold, 1)
-    
+
     quote do
       @lease_length    unquote(lease_length)
       @lease_threshold unquote(lease_threshold)
@@ -19,7 +19,7 @@ defmodule Relocker.Server do
         end
         GenServer.start(__MODULE__, args, opts)
       end
-        
+
       def start_link(args, opts \\ []) do
         name = Keyword.get(opts, :name)
         if name != nil do
@@ -28,9 +28,9 @@ defmodule Relocker.Server do
         end
         GenServer.start_link(__MODULE__, args, opts)
       end
-      
+
       # GenServer API
-      
+
       def handle_info({:'$relock_extend', lock}, state) do
         case Relocker.Registry.extend(lock, Relocker.Utils.time) do
           {:ok, lock} ->
@@ -47,9 +47,9 @@ defmodule Relocker.Server do
         Relocker.Registry.unregister
         :ok
       end
-      
+
       defoverridable [terminate: 2]
-      
+
     end
   end
 

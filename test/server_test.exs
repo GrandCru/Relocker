@@ -5,7 +5,7 @@ defmodule RelockerServerTest do
   alias Relocker.Registry
 
   alias Relocker.Test.NamedServer
-  
+
   @lease_time_secs 5
 
   setup_all do

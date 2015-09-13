@@ -2,18 +2,20 @@ defmodule Relocker.Locker do
 
   use Behaviour
 
+  require Logger
+
   alias Relocker.Lock
 
   @type lock_name :: binary | atom
 
   defcallback start_link(opts :: []) :: {:ok, pid}
-  
+
   defcallback lock(name :: lock_name, metadata :: any, lease_time_secs :: integer, time :: integer) :: {:ok, Lock.t} | :error
 
   defcallback read(name :: lock_name, time :: integer) :: {:ok, Lock.t} | :error
-  
+
   defcallback extend(lock :: Lock.t, time :: integer) :: {:ok, Lock.t} | :error
-  
+
   defcallback unlock(lock :: Lock.t, time :: integer) :: :ok | :error
 
   defcallback reset() :: :ok | :error
@@ -47,7 +49,10 @@ defmodule Relocker.Locker do
   def impl do
     case Application.get_env(:relocker, :locker) do
       nil ->
-        raise "No locker implementation defined! Please check config.exs of this library to learn how to do it."
+        Logger.warn """
+        No locker implementation defined! Please define one by adding `:relocker, :locker, <LockerModule>` to Application config. Using default in-memory implementation from `Relocker.Locker.Agent`.
+        """
+        Relocker.Locker.Agent
       module ->
         module
     end
