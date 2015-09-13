@@ -43,12 +43,6 @@ defmodule Relocker.Server do
         end
       end
 
-      def init(_) do
-        Process.flag(:trap_exit, true)
-      end
-      
-      defoverridable [init: 1]
-
       def terminate(_reason, _state) do
         Relocker.ProcessRegistry.unregister
         :ok
