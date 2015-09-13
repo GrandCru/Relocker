@@ -1,10 +1,10 @@
-defmodule Relocker.Registry.Redis do
+defmodule Relocker.Locker.Redis do
   use GenServer
 
   import Exredis
   import Exredis.Script
 
-  @behaviour Relocker.Registry
+  @behaviour Relocker.Locker
 
   alias Relocker.Lock
   alias Relocker.Utils

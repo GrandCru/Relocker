@@ -1,7 +1,7 @@
-defmodule Relocker.Registry.Agent do
+defmodule Relocker.Locker.Agent do
   use GenServer
 
-  @behaviour Relocker.Registry
+  @behaviour Relocker.Locker
 
   alias Relocker.Lock
   alias Relocker.Utils

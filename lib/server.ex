@@ -14,7 +14,7 @@ defmodule Relocker.Server do
       def start(args, opts \\ []) do
         name = Keyword.get(opts, :name)
         if name != nil do
-          opts = Keyword.put(opts, :name, {:via, Relocker.ProcessRegistry, name})
+          opts = Keyword.put(opts, :name, {:via, Relocker.Registry, name})
           args = Keyword.put(args, :name, name)
         end
         GenServer.start(__MODULE__, args, opts)
@@ -23,7 +23,7 @@ defmodule Relocker.Server do
       def start_link(args, opts \\ []) do
         name = Keyword.get(opts, :name)
         if name != nil do
-          opts = Keyword.put(opts, :name, {:via, Relocker.ProcessRegistry, name})
+          opts = Keyword.put(opts, :name, {:via, Relocker.Registry, name})
           args = Keyword.put(args, :name, name)
         end
         GenServer.start_link(__MODULE__, args, opts)
@@ -44,7 +44,7 @@ defmodule Relocker.Server do
       end
 
       def terminate(_reason, _state) do
-        Relocker.ProcessRegistry.unregister
+        Relocker.Registry.unregister
         :ok
       end
       

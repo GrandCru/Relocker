@@ -1,56 +1,72 @@
 defmodule Relocker.Registry do
 
-  use Behaviour
+  alias Relocker.Locker
+  alias Relocker.Utils
 
-  alias Relocker.Lock
+  require Logger
 
-  @type lock_name :: binary | atom
-
-  defcallback start_link(opts :: []) :: {:ok, pid}
-  
-  defcallback lock(name :: lock_name, metadata :: any, lease_time_secs :: integer, time :: integer) :: {:ok, Lock.t} | :error
-
-  defcallback read(name :: lock_name, time :: integer) :: {:ok, Lock.t} | :error
-  
-  defcallback extend(lock :: Lock.t, time :: integer) :: {:ok, Lock.t} | :error
-  
-  defcallback unlock(lock :: Lock.t, time :: integer) :: :ok | :error
-
-  defcallback reset() :: :ok | :error
-
-  # Client
-
-  def start_link(opts) do
-    impl.start_link(opts)
-  end
-
-  def lock(name, metadata, lease_time_secs, time) when (is_binary(name) or is_atom(name)) and is_integer(lease_time_secs) do
-    impl.lock name, metadata, lease_time_secs, time
-  end
-
-  def read(name, time) do
-    impl.read name, time
-  end
-
-  def extend(%Lock{} = lock, time) do
-    impl.extend lock, time
-  end
-
-  def unlock(%Lock{} = lock, time) do
-    impl.unlock lock, time
-  end
-
-  def reset do
-    impl.reset
-  end
-
-  def impl do
-    case Application.get_env(:relocker, :registry) do
-      nil ->
-        raise "No registry backend defined! Please check config.exs of this library to learn how to do it."
-      module ->
-        module
+  @doc """
+  Registers the given `pid` to a `name` globally.
+  """
+  @spec register_name(any, pid) :: :yes | :no
+  def register_name(name, pid) do
+    case Locker.lock(name, %{pid: pid, node: node}, 5, Utils.time) do
+      {:ok, lock} ->
+        if pid == self do
+          Process.put(:'$relock_lock', lock)
+        end
+        Process.send_after(pid, {:'$relock_extend', lock}, 1000)
+        Logger.debug "Registered #{inspect name} for #{inspect pid}"
+        :yes
+      :error ->
+        Logger.warn "Unable to register #{inspect name} for pid #{inspect pid}"
+        :no
     end
   end
+
+  @doc """
+  Finds the process identifier for the given `name`.
+  """
+  @spec whereis_name(any) :: pid | :undefined
+  def whereis_name(name) do
+    case Locker.read(name, Utils.time) do
+      {:ok, lock} ->
+        lock.metadata.pid
+      :error ->
+        :undefined
+    end
+  end
+  
+  @doc """
+  Unregisters the given `name`.
+  """
+  @spec unregister_name(any) :: any
+  def unregister_name(name) do
+    case Locker.read(name) do
+      {:ok, lock} ->
+        Locker.unlock(lock, Utils.time)
+      :error ->
+        :undefined
+    end
+  end
+  
+  @doc """
+  Unregisters the calling process.
+  """
+  @spec unregister :: any
+  def unregister do
+    lock = Process.get(:'$relock_lock')
+    Logger.debug "unregister #{inspect lock}"
+    Locker.unlock(lock, Utils.time) 
+  end
+
+  def send(name, msg) do
+    pid = whereis_name(name)
+    if pid != :undefined do
+      Kernel.send(pid, msg)
+    else
+      {:badarg, {name, msg}}
+    end
+  end 
 
 end
