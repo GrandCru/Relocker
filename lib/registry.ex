@@ -60,6 +60,9 @@ defmodule Relocker.Registry do
     Locker.unlock(lock, Utils.time)
   end
 
+  @doc """
+  Send message to the registered process.
+  """
   def send(name, msg) do
     pid = whereis_name(name)
     if pid != :undefined do
