@@ -4,6 +4,7 @@ defmodule Relocker.Locker do
 
   require Logger
 
+  alias Relocker.Utils
   alias Relocker.Lock
 
   @type lock_name :: binary | atom
@@ -26,19 +27,19 @@ defmodule Relocker.Locker do
     impl.start_link(opts)
   end
 
-  def lock(name, metadata, lease_time_secs, current_time) when (is_binary(name) or is_atom(name)) and is_integer(lease_time_secs) do
+  def lock(name, metadata, lease_time_secs, current_time \\ Utils.time) when (is_binary(name) or is_atom(name)) and is_integer(lease_time_secs) do
     impl.lock name, metadata, lease_time_secs, current_time
   end
 
-  def read(name, current_time) do
+  def read(name, current_time \\ Utils.time) do
     impl.read name, current_time
   end
 
-  def extend(%Lock{} = lock, current_time) do
+  def extend(%Lock{} = lock, current_time \\ Utils.time) do
     impl.extend lock, current_time
   end
 
-  def unlock(%Lock{} = lock, current_time) do
+  def unlock(%Lock{} = lock, current_time \\ Utils.time) do
     impl.unlock lock, current_time
   end
 
