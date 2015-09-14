@@ -14,6 +14,8 @@ defmodule RelockerServerTest do
 
     assert pid == Registry.whereis_name "my_little_server"
 
+    assert {:error, {:already_started, pid}} == NamedServer.start_link([], name: "my_little_server")
+
     assert GenServer.cast({:via, Registry, "my_little_server"}, :stop) == :ok
 
     :timer.sleep 100
