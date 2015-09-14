@@ -11,7 +11,7 @@ registered name. When the process exits the lock will be freed.
 
 For example:
 
-```
+```elixir
 defmodule Game do
   use Relocker.Server
 
@@ -33,17 +33,17 @@ end
 ```
 
 This will create a lock with name "player_1"
-```
+```elixir
 iex> {:ok, pid} = Game.start_link([], name: "player_1")
 ```
 
 If you try to start a new one while the old one is running you get: 
-```
+```elixir
 iex> {:error, {:already_started, ...}} = Game.start_link [], name: "player_1"
 ```
 
 When a process has been registered, you can send messages via registry just by using the lock name
-```
+```elixir
 iex> GenServer.cast({:via, Relocker.Registry, "player_1"}, :stop) 
 ```
 
