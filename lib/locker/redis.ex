@@ -66,6 +66,8 @@ defmodule Relocker.Locker.Redis do
 
   def handle_call({:read, name, time}, _from, state) do
     case query(state.redis, ["GET", redis_key(name)]) do
+      :undefined ->
+        {:reply, :error, state}
       nil ->
         {:reply, :error, state}
       secret ->
@@ -133,6 +135,7 @@ defmodule Relocker.Locker.Redis do
   defp redis_key_meta(name) when is_atom(name), do: name |> Atom.to_string |> redis_key_meta
   defp redis_key_meta(name) when is_binary(name), do: "relock:#{scope}:m:#{name}"
 
+  defp decode(:undefined), do: :undefined
   defp decode(bin) do
     lock = :erlang.binary_to_term(bin)
     put_in(lock.secret, to_string(lock.secret))

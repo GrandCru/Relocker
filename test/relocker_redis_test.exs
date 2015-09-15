@@ -4,6 +4,11 @@ defmodule RelockerRedis do
   alias Relocker.Locker.Redis, as: Locker
   alias Relocker.Test.Utils, as: TestUtils
 
+  alias Relocker.Registry
+
+  alias Relocker.Test.NamedServer
+  alias Relocker.Test.NamedFsm
+
   @moduletag :redis
 
   @lease_time_secs 5
@@ -65,5 +70,36 @@ defmodule RelockerRedis do
     assert lock.valid_until < new_lock.valid_until
 
   end
+
+   test :genserver do
+
+    {:ok, pid} = NamedServer.start_link([], name: "my_little_server")
+
+    assert pid == Registry.whereis_name "my_little_server"
+
+    assert {:error, {:already_started, pid}} == NamedServer.start_link([], name: "my_little_server")
+
+    send pid, :'$relock_extend'
+
+    assert GenServer.cast({:via, Registry, "my_little_server"}, :stop) == :ok
+
+    :timer.sleep 100
+
+    assert :undefined == Registry.whereis_name "my_little_server"
+
+  end
+
+  test :fsm do
+
+    {:ok, pid} = NamedFsm.start_link([], name: "my_little_fsm")
+
+    assert pid == Registry.whereis_name "my_little_fsm"
+
+    send pid, :'$relock_extend'
+
+    assert :gen_fsm.sync_send_all_state_event({:via, Registry, "my_little_fsm"}, :stop) == :ok
+
+  end
+
 
 end
