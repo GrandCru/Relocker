@@ -15,7 +15,7 @@ defmodule Relocker.Registry do
         if pid == self do
           Process.put(:'$relock_lock', lock)
         end
-        Process.send_after(pid, {:'$relock_extend', lock}, 1000)
+        Process.send_after(pid, :'$relock_extend', 1000)
         Logger.debug "Registered #{inspect name} for #{inspect pid}"
         :yes
       :error ->
