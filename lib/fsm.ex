@@ -55,7 +55,7 @@ defmodule Relocker.Fsm do
       end
 
       def handle_info({:'$relock_extend', lock}, statename, state) do
-        case Relocker.extend(lock, Relocker.Utils.time) do
+        case Relocker.Locker.extend(lock, Relocker.Utils.time) do
           {:ok, lock} ->
             Process.put(:'$relock_lock', lock)
             # schedule new lock lease extend
