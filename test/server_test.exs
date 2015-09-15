@@ -16,6 +16,8 @@ defmodule RelockerServerTest do
 
     assert {:error, {:already_started, pid}} == NamedServer.start_link([], name: "my_little_server")
 
+    send pid, :'$relock_extend'
+
     assert GenServer.cast({:via, Registry, "my_little_server"}, :stop) == :ok
 
     :timer.sleep 100
@@ -31,6 +33,10 @@ defmodule RelockerServerTest do
     {:ok, pid} = NamedFsm.start_link([], name: "my_little_fsm")
 
     assert pid == Registry.whereis_name "my_little_fsm"
+
+    send pid, :'$relock_extend'
+
+    :timer.sleep 5000
 
     assert :gen_fsm.sync_send_all_state_event({:via, Registry, "my_little_fsm"}, :stop) == :ok
 
