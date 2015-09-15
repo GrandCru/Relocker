@@ -56,7 +56,7 @@ defmodule Relocker.Server do
       # GenServer API
 
       def handle_info({:'$relock_extend', lock}, state) do
-        case Relocker.Registry.extend(lock, Relocker.Utils.time) do
+        case Relocker.Locker.extend(lock, Relocker.Utils.time) do
           {:ok, lock} ->
             Process.put(:'$relock_lock', lock)
             # schedule new lock lease extend
