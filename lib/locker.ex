@@ -50,10 +50,9 @@ defmodule Relocker.Locker do
   def impl do
     case Application.get_env(:relocker, :locker) do
       nil ->
-        Logger.warn """
-        No locker implementation defined! Please define one by adding `:relocker, :locker, <LockerModule>` to Application config. Using default in-memory implementation from `Relocker.Locker.Agent`.
+        raise """
+        No locker implementation defined! Please define one by adding `:relocker, :locker, <LockerModule>` to Application config.
         """
-        Relocker.Locker.Agent
       module ->
         module
     end
