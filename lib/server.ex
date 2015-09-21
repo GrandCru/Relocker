@@ -57,6 +57,7 @@ defmodule Relocker.Server do
 
       def handle_info(:'$relock_extend', state) do
         lock = Process.get(:'$relock_lock')
+        lock = put_in(lock.lease_time, @lease_length)
         case Relocker.Locker.extend(lock, Relocker.Utils.time) do
           {:ok, lock} ->
             Process.put(:'$relock_lock', lock)

@@ -5,17 +5,22 @@ defmodule Relocker.Registry do
 
   require Logger
 
+  @initial_lease_length 10
+  @initial_lease_threshold 2
+
   @doc """
   Registers the given `pid` to a `name` globally.
   """
   @spec register_name(any, pid) :: :yes | :no
-  def register_name(name, pid) do
-    case Locker.lock(name, %{pid: pid, node: node}, 5, Utils.time) do
+  def register_name(name, pid, opts \\ []) do
+    lease_length = Keyword.get opts, :lease_length, @initial_lease_length
+    lease_threshold = Keyword.get opts, :lease_threshold, @initial_lease_threshold
+    case Locker.lock(name, %{pid: pid, node: node}, lease_length, Utils.time) do
       {:ok, lock} ->
         if pid == self do
           Process.put(:'$relock_lock', lock)
         end
-        Process.send_after(pid, :'$relock_extend', 1000)
+        Process.send_after(pid, :'$relock_extend', (lease_length - lease_threshold) * 1000)
         Logger.debug "Registered #{inspect name} for #{inspect pid}"
         :yes
       :error ->
