@@ -3,7 +3,7 @@ defmodule Relocker.Mixfile do
 
   def project do
     [app: :relocker,
-     version: "0.0.4",
+     version: "0.0.5",
      elixir: "~> 1.0",
      build_embedded: Mix.env != :test,
      start_permanent: Mix.env != :test,
