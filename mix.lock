@@ -1,3 +1,5 @@
-%{"eredis": {:hex, :eredis, "1.0.8"},
+%{"earmark": {:hex, :earmark, "0.1.17"},
+  "eredis": {:hex, :eredis, "1.0.8"},
+  "ex_doc": {:hex, :ex_doc, "0.10.0"},
   "exredis": {:hex, :exredis, "0.2.0"},
   "timex": {:hex, :timex, "0.13.5"}}

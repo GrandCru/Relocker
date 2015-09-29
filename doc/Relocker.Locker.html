@@ -1,0 +1,517 @@
+    <!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Relocker.Locker – relocker v0.0.5</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.10.0">
+    <link rel="stylesheet" href="dist/app.css" />
+    <script src="dist/sidebar_items.js"></script>
+  </head>
+  <body data-type="modules">
+
+    <div class="main">
+<button class="sidebar-toggle">
+  <i class="icon-menu"></i>
+</button>
+<section class="sidebar">
+  <button class="sidebar-toggle">
+    <i class="icon-menu"></i>
+  </button>
+
+  
+  <a href="extra-api-reference.html" class="sidebar-projectLink">
+    <div class="sidebar-projectDetails">
+      <h1 class="sidebar-projectName">
+        relocker
+      </h1>
+      <h2 class="sidebar-projectVersion">
+        v0.0.5
+      </h2>
+    </div>
+    
+  </a>
+
+  <div class="sidebar-search">
+    <i class="icon-search"></i>
+    <input type="text" class="sidebar-searchInput" placeholder="search" autocomplete="off" />
+  </div>
+
+  <ul class="sidebar-listNav">
+    <li><a id="extras-list" href="#full-list">Pages</a></li>
+
+    
+      <li><a id="modules-list" href="#full-list">Modules</a></li>
+    
+
+    
+
+    
+  </ul>
+
+  <ul id="full-list" class="sidebar-fullList"></ul>
+  <div class="sidebar-noResults"></div>
+</section>
+
+<section class="content">
+  <div id="content" class="content-inner">
+
+
+      <h1>
+        Relocker.Locker
+        
+          <small>behaviour</small>
+        
+        
+      </h1>
+
+      
+        <section id="moduledoc" class="docstring">
+          <p>A module for acquiring a lock, extending it and releasing the lock.</p>
+
+        </section>
+      
+
+      
+        <section id="summary" class="details-list">
+          <h1 class="section-heading">
+            <a class="hover-link" href="#summary">
+              <i class="icon-link"></i>
+            </a>
+            Summary
+          </h1>
+          
+  <div class="summary-types summary">
+    <h2>
+      <a href="#types">Types</a>
+    </h2>
+    <div class="summary-row">
+  <div class="summary-signature">
+    <a href="#t:lock_name/0">lock_name()</a>
+  </div>
+  
+</div>
+
+  </div>
+
+
+          
+  <div class="summary-functions summary">
+    <h2>
+      <a href="#functions">Functions</a>
+    </h2>
+    <div class="summary-row">
+  <div class="summary-signature">
+    <a href="#extend/2">extend(lock, current_time \\ Relocker.Utils.time())</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Extend a lock. When successful a new lock struct is returned and that should be used for subsequent calls to this API</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#impl/0">impl()</a>
+  </div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#lock/4">lock(name, metadata, lease_time_secs, current_time \\ Relocker.Utils.time())</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Try to acquire a lock. Returns <code class="inline">{:ok, %Lock{}}</code> if successful, if not <code class="inline">:error</code> is returned</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#read/2">read(name, current_time \\ Relocker.Utils.time())</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Read lock with name <code class="inline">lock_name</code>. Returns <code class="inline">{:ok, %Lock{}}</code> if successful</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#reset/0">reset()</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Reset, meant to be used for testing only</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#start_link/1">start_link(opts)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Start a locker process</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#unlock/2">unlock(lock, current_time \\ Relocker.Utils.time())</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Release a lock</p>
+</div>
+  
+</div>
+
+  </div>
+
+
+          
+
+          
+  <div class="summary-callbacks summary">
+    <h2>
+      <a href="#callbacks">Callbacks</a>
+    </h2>
+    <div class="summary-row">
+  <div class="summary-signature">
+    <a href="#c:extend/2">extend(lock, current_time)</a>
+  </div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#c:lock/4">lock(name, metadata, lease_time_secs, current_time)</a>
+  </div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#c:read/2">read(name, current_time)</a>
+  </div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#c:reset/0">reset()</a>
+  </div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#c:start_link/1">start_link(opts)</a>
+  </div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#c:unlock/2">unlock(lock, current_time)</a>
+  </div>
+  
+</div>
+
+  </div>
+
+
+        </section>
+      
+
+      
+        <section id="types" class="types details-list">
+          <h1 class="section-heading">
+            <a class="hover-link" href="#types">
+              <i class="icon-link"></i>
+            </a>
+            Types
+          </h1>
+          <div class="types-list">
+            <div id="t:lock_name/0" class="type-detail">
+  <pre><code class="elixir"><a href="#t:lock_name/0">lock_name</a> :: binary | atom</code></pre>
+  
+</div>
+
+          </div>
+        </section>
+      
+
+      
+        <section id="functions" class="details-list">
+          <h1 class="section-heading">
+            <a class="hover-link" href="#functions">
+              <i class="icon-link"></i>
+            </a>
+            Functions
+          </h1>
+          <div class="detail" id="extend/2">
+  <div class="detail-header">
+    <a href="#extend/2" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">extend(lock, current_time \\ Relocker.Utils.time())</span>
+      
+  </div>
+  
+  <section class="docstring">
+    <p>Extend a lock. When successful a new lock struct is returned and that should be used for subsequent calls to this API.</p>
+
+  </section>
+</div>
+<div class="detail" id="impl/0">
+  <div class="detail-header">
+    <a href="#impl/0" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">impl()</span>
+      
+  </div>
+  
+  <section class="docstring">
+    
+  </section>
+</div>
+<div class="detail" id="lock/4">
+  <div class="detail-header">
+    <a href="#lock/4" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">lock(name, metadata, lease_time_secs, current_time \\ Relocker.Utils.time())</span>
+      
+  </div>
+  
+  <section class="docstring">
+    <p>Try to acquire a lock. Returns <code class="inline">{:ok, %Lock{}}</code> if successful, if not <code class="inline">:error</code> is returned</p>
+
+  </section>
+</div>
+<div class="detail" id="read/2">
+  <div class="detail-header">
+    <a href="#read/2" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">read(name, current_time \\ Relocker.Utils.time())</span>
+      
+  </div>
+  
+  <section class="docstring">
+    <p>Read lock with name <code class="inline">lock_name</code>. Returns <code class="inline">{:ok, %Lock{}}</code> if successful.</p>
+
+  </section>
+</div>
+<div class="detail" id="reset/0">
+  <div class="detail-header">
+    <a href="#reset/0" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">reset()</span>
+      
+  </div>
+  
+  <section class="docstring">
+    <p>Reset, meant to be used for testing only.</p>
+
+  </section>
+</div>
+<div class="detail" id="start_link/1">
+  <div class="detail-header">
+    <a href="#start_link/1" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">start_link(opts)</span>
+      
+  </div>
+  
+  <section class="docstring">
+    <p>Start a locker process</p>
+
+  </section>
+</div>
+<div class="detail" id="unlock/2">
+  <div class="detail-header">
+    <a href="#unlock/2" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">unlock(lock, current_time \\ Relocker.Utils.time())</span>
+      
+  </div>
+  
+  <section class="docstring">
+    <p>Release a lock.</p>
+
+  </section>
+</div>
+
+        </section>
+      
+
+      
+
+      
+        <section id="callbacks" class="details-list">
+          <h1 class="section-heading">
+            <a class="hover-link" href="#callbacks">
+              <i class="icon-link"></i>
+            </a>
+            Callbacks
+          </h1>
+          <div class="detail" id="c:extend/2">
+  <div class="detail-header">
+    <a href="#c:extend/2" class="detail-link" title="Link to this callback">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">extend(lock, current_time)</span>
+      
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">extend(lock :: <a href="Relocker.Lock.html#t:t/0">Relocker.Lock.t</a>, current_time :: integer) ::
+  {:ok, <a href="Relocker.Lock.html#t:t/0">Relocker.Lock.t</a>} |
+  :error</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    
+  </section>
+</div>
+<div class="detail" id="c:lock/4">
+  <div class="detail-header">
+    <a href="#c:lock/4" class="detail-link" title="Link to this callback">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">lock(name, metadata, lease_time_secs, current_time)</span>
+      
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">lock(name :: <a href="#t:lock_name/0">lock_name</a>, metadata :: any, lease_time_secs :: integer, current_time :: integer) ::
+  {:ok, <a href="Relocker.Lock.html#t:t/0">Relocker.Lock.t</a>} |
+  :error</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    
+  </section>
+</div>
+<div class="detail" id="c:read/2">
+  <div class="detail-header">
+    <a href="#c:read/2" class="detail-link" title="Link to this callback">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">read(name, current_time)</span>
+      
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">read(name :: <a href="#t:lock_name/0">lock_name</a>, current_time :: integer) ::
+  {:ok, <a href="Relocker.Lock.html#t:t/0">Relocker.Lock.t</a>} |
+  :error</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    
+  </section>
+</div>
+<div class="detail" id="c:reset/0">
+  <div class="detail-header">
+    <a href="#c:reset/0" class="detail-link" title="Link to this callback">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">reset()</span>
+      
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">reset :: :ok | :error</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    
+  </section>
+</div>
+<div class="detail" id="c:start_link/1">
+  <div class="detail-header">
+    <a href="#c:start_link/1" class="detail-link" title="Link to this callback">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">start_link(opts)</span>
+      
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">start_link(opts :: []) :: {:ok, pid}</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    
+  </section>
+</div>
+<div class="detail" id="c:unlock/2">
+  <div class="detail-header">
+    <a href="#c:unlock/2" class="detail-link" title="Link to this callback">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">unlock(lock, current_time)</span>
+      
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">unlock(lock :: <a href="Relocker.Lock.html#t:t/0">Relocker.Lock.t</a>, current_time :: integer) ::
+  :ok |
+  :error</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    
+  </section>
+</div>
+
+        </section>
+      
+        <footer class="footer">
+      <p>
+        <span class="line">
+          Built using
+          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" rel="help" target="_blank">ExDoc</a> (v0.10.0),
+        </span>
+        <span class="line">
+          designed by
+          <a href="https://twitter.com/dignifiedquire" target="_blank" title="@dignifiedquire">Friedel Ziegelmayer</a>.
+          </span>
+      </p>
+    </footer>
+  </div>
+</section>
+</div>
+    <script src="dist/app.js"></script>
+  </body>
+</html>
+
