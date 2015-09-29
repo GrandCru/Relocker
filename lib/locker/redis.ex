@@ -1,4 +1,8 @@
 defmodule Relocker.Locker.Redis do
+  @moduledoc """
+  Aims to implement the algorithm for single redis server instance described at
+  http://redis.io/topics/distlock
+  """
   use GenServer
 
   import Exredis

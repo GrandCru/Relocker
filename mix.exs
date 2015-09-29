@@ -8,6 +8,8 @@ defmodule Relocker.Mixfile do
      build_embedded: Mix.env != :test,
      start_permanent: Mix.env != :test,
      elixirc_paths: elixirc_paths(Mix.env),
+     description: description,
+     package: package,
      deps: deps]
   end
 
@@ -32,6 +34,21 @@ defmodule Relocker.Mixfile do
     [
       {:exredis, ">= 0.2.0" }
     ]
+  end
+
+  defp description do
+    """
+    A library for holding a lock in Redis.
+    """
+  end
+
+  defp package do
+    [
+     files: ["lib", "mix.exs", "README*", "readme*", "LICENSE*", "license*"],
+     maintainers: ["Roope Kangas"],
+     licenses: ["MIT"],
+     links: %{"GitHub" => "https://github.com/grandCru/relocker"}
+   ]
   end
 
   # Include some support code for :test

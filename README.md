@@ -1,7 +1,9 @@
 Relocker
 ========
 
-A library for holding a lock in redis.
+A library for holding a lock in redis. The locking algorithm is the one described on
+http://redis.io/topics/distlock as "Correct implementation with a single instance".
+
 
 Usage
 =====
@@ -53,4 +55,6 @@ License notice
 
 Parts of the codebase like `lib/server.ex` and `lib/fsm.ex` heavily borrow from this
 project: https://github.com/tsharju/elixir_locker.
+
+All other code (c) Grand Cru. See `LICENSE` for details.
 

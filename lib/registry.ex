@@ -1,5 +1,8 @@
 defmodule Relocker.Registry do
-
+  @moduledoc """
+    This module provides a global process registry using `Relocker.Locker` as the storage backend. 
+    It supports e.g., the `GenServer`'s `{:via, module, term}` API.
+  """
   alias Relocker.Locker
   alias Relocker.Utils
 

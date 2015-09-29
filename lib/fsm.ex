@@ -1,6 +1,9 @@
 defmodule Relocker.Fsm do
 
   @doc ~s"""
+  
+  See: https://github.com/tsharju/elixir_locker/blob/master/lib/elixir_locker/fsm.ex
+
   The MIT License (MIT)
 
   Copyright (c) 2015 Teemu Harju

@@ -1,6 +1,9 @@
 defmodule Relocker.Server do
 
   @doc ~s"""
+
+  See: https://github.com/tsharju/elixir_locker/blob/master/lib/elixir_locker/server.ex
+
   The MIT License (MIT)
 
   Copyright (c) 2015 Teemu Harju
