@@ -12,7 +12,7 @@ defmodule Relocker.Locker do
 
   @type lock_name :: binary | atom
 
-  defcallback start_link(opts :: []) :: {:ok, pid}
+  defcallback child_spec() :: Supervisor.Spec.spec | :none
 
   defcallback lock(name :: lock_name, metadata :: any, lease_time_secs :: integer, current_time :: integer) :: {:ok, Lock.t} | :error
 
@@ -26,9 +26,18 @@ defmodule Relocker.Locker do
 
   # Client
 
-  @doc "Start a locker process"
-  def start_link(opts) do
-    impl.start_link(opts)
+  def child_spec() do
+    case impl.child_spec do
+      :none ->
+        import Supervisor.Spec, warn: false
+        worker(Relocker.Locker, [[name: Relocker.Locker]])
+      spec ->
+        spec
+    end
+  end
+
+  def start_link(opts \\ []) do
+    impl.start_link opts
   end
 
   @doc "Try to acquire a lock. Returns `{:ok, %Lock{}}` if successful, if not `:error` is returned"
