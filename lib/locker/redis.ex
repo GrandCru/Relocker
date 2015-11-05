@@ -40,7 +40,7 @@ defmodule Relocker.Locker.Redis do
   end
 
   def stop do
-    GenServer.cast(__MODULE__, :stop)
+    GenServer.call(__MODULE__, :stop)
   end
 
   # GenServer
@@ -112,7 +112,7 @@ defmodule Relocker.Locker.Redis do
     {:reply, :ok, state}
   end
 
-  def handle_cast(:stop, state) do
+  def handle_call(:stop, _from, state) do
     Exredis.stop state.redis
     {:stop, :normal, state}
   end
