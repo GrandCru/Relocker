@@ -14,12 +14,16 @@ defmodule RelockerRedis do
   @lease_time_secs 5
 
   setup_all do
-    {:ok, _pid} = Relocker.Locker.Redis.start_link redis: "redis://192.168.33.11:6379"
+    {:ok, _pid} = Locker.start_link redis: "redis://192.168.33.11:6379"
+    :ok
+  end
+
+  setup do
+    Locker.reset
     :ok
   end
 
   test "lock/unlock" do
-    Locker.reset
 
     now = TestUtils.time(0)
 
@@ -55,7 +59,6 @@ defmodule RelockerRedis do
   end
 
   test "extend lease" do
-    Locker.reset
 
     now = TestUtils.time(3)
 
@@ -100,6 +103,5 @@ defmodule RelockerRedis do
     assert :gen_fsm.sync_send_all_state_event({:via, Registry, "my_little_fsm"}, :stop) == :ok
 
   end
-
 
 end
