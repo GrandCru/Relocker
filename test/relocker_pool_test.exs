@@ -15,7 +15,6 @@ defmodule RelockerPoolTest do
   setup_all do
 
     Application.get_env :relocker, :locker, Relocker.Locker.Pool
-    Application.put_env :relocker, :redis, "redis://192.168.33.11:6379"
 
     children = [
       Locker.child_spec
