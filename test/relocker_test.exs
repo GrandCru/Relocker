@@ -6,6 +6,10 @@ defmodule RelockerTest do
 
   @lease_time_secs 5
 
+  setup_all do
+    Application.put_env :relocker, :locker, Relocker.Locker.Agent
+  end
+
   test "lock/unlock" do
 
     Locker.reset

@@ -6,11 +6,11 @@ defmodule Relocker.Locker.Pool do
   @behaviour Relocker.Locker
 
   def child_spec do
-    :poolboy.child_spec __MODULE__, Application.fetch_env!(:relocker, :pool)
+    :poolboy.child_spec __MODULE__, Application.fetch_env!(:relocker, :pool), []
   end
 
-  def start_link(_args) do
-    GenServer.start_link Relocker.Locker.Redis
+  def start_link(args) do
+    GenServer.start_link Relocker.Locker.Redis, args
   end
 
   def lock(name, metadata, lease_time_secs, time) do
@@ -38,11 +38,15 @@ defmodule Relocker.Locker.Pool do
   end
 
   def reset do
-    :ok
+    :poolboy.transaction __MODULE__, fn pid ->
+      GenServer.call pid, :reset
+    end
   end
 
   def stop do
-    :ok
+    :poolboy.transaction __MODULE__, fn pid ->
+      GenServer.call pid, :stop
+    end
   end
 
 end
