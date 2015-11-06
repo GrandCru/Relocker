@@ -15,8 +15,14 @@ defmodule Relocker.Locker.Redis do
 
   # Client
 
+  def child_spec, do: :none
+
   def start_link(opts \\ []) do
     GenServer.start_link(__MODULE__, opts, name: __MODULE__)
+  end
+
+  def start_link_anonymous(opts \\ []) do
+    GenServer.start_link(__MODULE__, opts, [])
   end
 
   def lock(name, metadata, lease_time_secs, time) do
@@ -40,7 +46,7 @@ defmodule Relocker.Locker.Redis do
   end
 
   def stop do
-    GenServer.cast(__MODULE__, :stop)
+    GenServer.call(__MODULE__, :stop)
   end
 
   # GenServer
@@ -112,7 +118,7 @@ defmodule Relocker.Locker.Redis do
     {:reply, :ok, state}
   end
 
-  def handle_cast(:stop, state) do
+  def handle_call(:stop, _from, state) do
     Exredis.stop state.redis
     {:stop, :normal, state}
   end

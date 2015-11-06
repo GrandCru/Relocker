@@ -7,7 +7,7 @@ defmodule Relocker do
     import Supervisor.Spec, warn: false
 
     children = [
-      worker(Relocker.Locker, [[name: Relocker.Locker]])
+      Relocker.Locker.child_spec
     ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html

@@ -1,7 +1,7 @@
-defmodule RelockerRedis do
+defmodule RelockerPoolTest do
   use ExUnit.Case, async: false
 
-  alias Relocker.Locker.Redis, as: Locker
+  alias Relocker.Locker.Pool, as: Locker
   alias Relocker.Test.Utils, as: TestUtils
 
   alias Relocker.Registry
@@ -9,13 +9,20 @@ defmodule RelockerRedis do
   alias Relocker.Test.NamedServer
   alias Relocker.Test.NamedFsm
 
+  @lease_time_secs 5
   @moduletag :redis
 
-  @lease_time_secs 5
-
   setup_all do
-    Application.put_env :relocker, :locker, Relocker.Locker.Redis
-    {:ok, _pid} = Locker.start_link redis: "redis://192.168.33.11:6379"
+
+    Application.get_env :relocker, :locker, Relocker.Locker.Pool
+
+    children = [
+      Locker.child_spec
+    ]
+
+    opts = [strategy: :one_for_one, name: RelockerPoolTest.Supervisor]
+    {:ok, _pid} = Supervisor.start_link(children, opts)
+
     :ok
   end
 
@@ -24,12 +31,12 @@ defmodule RelockerRedis do
     :ok
   end
 
-  test "lock/unlock" do
+  test "lock" do
 
     now = TestUtils.time(0)
 
     {:ok, lock} = Locker.lock :my_lock_name, %{some_metadata: 10}, @lease_time_secs, now
-    :error = Locker.lock :my_lock_name, %{some_metadata: 10}, @lease_time_secs, now
+    assert :error = Locker.lock :my_lock_name, %{some_metadata: 10}, @lease_time_secs, now
 
     assert lock.name === :my_lock_name
     assert lock.valid_until == now + @lease_time_secs
@@ -58,6 +65,7 @@ defmodule RelockerRedis do
     assert :ok == Locker.unlock(new_lock, TestUtils.time(1))
 
   end
+
 
   test "extend lease" do
 

@@ -6,6 +6,8 @@ defmodule Relocker.Locker.Agent do
   alias Relocker.Lock
   alias Relocker.Utils
 
+  def child_spec, do: :none
+
   def start_link(_opts) do
     Agent.start_link(fn ->
       HashDict.new
