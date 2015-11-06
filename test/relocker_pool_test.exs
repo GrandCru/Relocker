@@ -9,7 +9,8 @@ defmodule RelockerPoolTest do
   alias Relocker.Test.NamedServer
   alias Relocker.Test.NamedFsm
 
-  @lease_time_secs 5  
+  @lease_time_secs 5
+  @moduletag :redis
 
   setup_all do
 
@@ -23,6 +24,11 @@ defmodule RelockerPoolTest do
     opts = [strategy: :one_for_one, name: RelockerPoolTest.Supervisor]
     {:ok, _pid} = Supervisor.start_link(children, opts)
 
+    :ok
+  end
+
+  setup do
+    Locker.reset
     :ok
   end
 
