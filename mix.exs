@@ -5,8 +5,8 @@ defmodule Relocker.Mixfile do
     [app: :relocker,
      version: "0.0.5",
      elixir: "~> 1.0",
-     build_embedded: Mix.env != :test,
-     start_permanent: Mix.env != :test,
+     build_embedded: Mix.env == :prod,
+     start_permanent: Mix.env == :prod,
      elixirc_paths: elixirc_paths(Mix.env),
      description: description,
      package: package,
@@ -56,5 +56,6 @@ defmodule Relocker.Mixfile do
 
   # Include some support code for :test
   defp elixirc_paths(:test), do: ["lib", "test/support"]
+  defp elixirc_paths(:dev), do: ["lib", "test/iex"]
   defp elixirc_paths(_), do: ["lib"]
 end

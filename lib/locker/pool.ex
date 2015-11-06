@@ -1,7 +1,6 @@
 defmodule Relocker.Locker.Pool do
 
   alias Relocker.Lock
-  alias Relocker.Utils
 
   @behaviour Relocker.Locker
 
