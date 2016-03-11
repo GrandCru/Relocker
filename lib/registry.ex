@@ -36,7 +36,7 @@ defmodule Relocker.Registry do
   Finds the process identifier for the given `name`.
   """
   @spec whereis_name(any) :: pid | :undefined
-  def whereis_name(name) do
+  def whereis_name(name) when is_binary(name) or is_atom(name) do
     case Locker.read(name, Utils.time) do
       {:ok, lock} ->
         lock.metadata.pid
@@ -49,7 +49,7 @@ defmodule Relocker.Registry do
   Unregisters the given `name`.
   """
   @spec unregister_name(any) :: any
-  def unregister_name(name) do
+  def unregister_name(name) when is_binary(name) or is_atom(name) do
     case Locker.read(name) do
       {:ok, lock} ->
         Locker.unlock(lock, Utils.time)

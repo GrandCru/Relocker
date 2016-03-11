@@ -66,7 +66,7 @@ defmodule Relocker.Locker.Redis do
 
     case query(state.redis, ["SET", redis_key(name), lock.secret, "NX", "EX", lease_time_secs]) do
       "OK" ->
-        state.redis |> query ["SET", redis_key_meta(name), :erlang.term_to_binary(lock), "EX", lease_time_secs]
+        state.redis |> query(["SET", redis_key_meta(name), :erlang.term_to_binary(lock), "EX", lease_time_secs])
         {:reply, {:ok, lock}, state}
       _ ->
         {:reply, :error, state}
@@ -95,7 +95,7 @@ defmodule Relocker.Locker.Redis do
     case res do
       "OK" ->
         lock = put_in(lock.valid_until, time + lock.lease_time)
-        state.redis |> query ["SET", redis_key_meta(lock.name), :erlang.term_to_binary(lock), "EX", lock.lease_time]
+        state.redis |> query(["SET", redis_key_meta(lock.name), :erlang.term_to_binary(lock), "EX", lock.lease_time])
         {:reply, {:ok, lock}, state}
       _ ->
         {:reply, :error, state}
@@ -113,8 +113,8 @@ defmodule Relocker.Locker.Redis do
   end
 
   def handle_call(:reset, _from, state) do
-    keys = state.redis |> query ["KEYS", "relock:*"]
-    state.redis |> query ["DEL"] ++ keys
+    keys = state.redis |> query(["KEYS", "relock:*"])
+    state.redis |> query(["DEL"] ++ keys)
     {:reply, :ok, state}
   end
 

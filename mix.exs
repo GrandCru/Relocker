@@ -3,13 +3,14 @@ defmodule Relocker.Mixfile do
 
   def project do
     [app: :relocker,
-     version: "0.0.6",
+     version: "0.0.7",
      elixir: "~> 1.0",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
      elixirc_paths: elixirc_paths(Mix.env),
      description: description,
      package: package,
+     dialyzer: [flags: ["-Woverspecs"]],
      deps: deps]
   end
 
