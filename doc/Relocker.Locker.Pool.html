@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Relocker.Locker.Redis – relocker v0.0.7</title>
+    <title>Relocker.Locker.Pool – relocker v0.0.7</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="ExDoc v0.10.0">
     <link rel="stylesheet" href="dist/app.css" />
@@ -60,17 +60,11 @@
 
 
       <h1>
-        Relocker.Locker.Redis
+        Relocker.Locker.Pool
         
         
       </h1>
 
-      
-        <section id="moduledoc" class="docstring">
-          <p>Aims to implement the algorithm for single redis server instance described at
-<a href="http://redis.io/topics/distlock">http://redis.io/topics/distlock</a></p>
-
-        </section>
       
 
       
@@ -99,7 +93,7 @@
 </div>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="#delete_lock/3">delete_lock(client, keys \\ [], argv \\ [])</a>
+    <a href="#default_config/0">default_config()</a>
   </div>
   
 </div>
@@ -110,12 +104,6 @@
   
     <div class="summary-synopsis"><p>Callback implementation for <a href="Relocker.Locker.html#c:extend/2"><code class="inline">Relocker.Locker.extend/2</code></a></p>
 </div>
-  
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="#extend_lock/3">extend_lock(client, keys \\ [], argv \\ [])</a>
-  </div>
   
 </div>
 <div class="summary-row">
@@ -147,13 +135,7 @@
 </div>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="#start_link/1">start_link(opts \\ [])</a>
-  </div>
-  
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="#start_link_anonymous/1">start_link_anonymous(opts \\ [])</a>
+    <a href="#start_link/1">start_link(args)</a>
   </div>
   
 </div>
@@ -207,12 +189,12 @@
 
   </section>
 </div>
-<div class="detail" id="delete_lock/3">
+<div class="detail" id="default_config/0">
   <div class="detail-header">
-    <a href="#delete_lock/3" class="detail-link" title="Link to this function">
+    <a href="#default_config/0" class="detail-link" title="Link to this function">
       <i class="icon-link"></i>
     </a>
-    <span class="signature">delete_lock(client, keys \\ [], argv \\ [])</span>
+    <span class="signature">default_config()</span>
       
   </div>
   
@@ -232,19 +214,6 @@
   <section class="docstring">
     <p>Callback implementation for <a href="Relocker.Locker.html#c:extend/2"><code class="inline">Relocker.Locker.extend/2</code></a>.</p>
 
-  </section>
-</div>
-<div class="detail" id="extend_lock/3">
-  <div class="detail-header">
-    <a href="#extend_lock/3" class="detail-link" title="Link to this function">
-      <i class="icon-link"></i>
-    </a>
-    <span class="signature">extend_lock(client, keys \\ [], argv \\ [])</span>
-      
-  </div>
-  
-  <section class="docstring">
-    
   </section>
 </div>
 <div class="detail" id="lock/4">
@@ -294,20 +263,7 @@
     <a href="#start_link/1" class="detail-link" title="Link to this function">
       <i class="icon-link"></i>
     </a>
-    <span class="signature">start_link(opts \\ [])</span>
-      
-  </div>
-  
-  <section class="docstring">
-    
-  </section>
-</div>
-<div class="detail" id="start_link_anonymous/1">
-  <div class="detail-header">
-    <a href="#start_link_anonymous/1" class="detail-link" title="Link to this function">
-      <i class="icon-link"></i>
-    </a>
-    <span class="signature">start_link_anonymous(opts \\ [])</span>
+    <span class="signature">start_link(args)</span>
       
   </div>
   

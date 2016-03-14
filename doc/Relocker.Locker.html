@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Relocker.Locker – relocker v0.0.5</title>
+    <title>Relocker.Locker – relocker v0.0.7</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="ExDoc v0.10.0">
     <link rel="stylesheet" href="dist/app.css" />
@@ -28,7 +28,7 @@
         relocker
       </h1>
       <h2 class="sidebar-projectVersion">
-        v0.0.5
+        v0.0.7
       </h2>
     </div>
     
@@ -104,7 +104,13 @@
     </h2>
     <div class="summary-row">
   <div class="summary-signature">
-    <a href="#extend/2">extend(lock, current_time \\ Relocker.Utils.time())</a>
+    <a href="#child_spec/0">child_spec()</a>
+  </div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#extend/2">extend(lock, current_time \\ Utils.time())</a>
   </div>
   
     <div class="summary-synopsis"><p>Extend a lock. When successful a new lock struct is returned and that should be used for subsequent calls to this API</p>
@@ -119,7 +125,7 @@
 </div>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="#lock/4">lock(name, metadata, lease_time_secs, current_time \\ Relocker.Utils.time())</a>
+    <a href="#lock/4">lock(name, metadata, lease_time_secs, current_time \\ Utils.time())</a>
   </div>
   
     <div class="summary-synopsis"><p>Try to acquire a lock. Returns <code class="inline">{:ok, %Lock{}}</code> if successful, if not <code class="inline">:error</code> is returned</p>
@@ -128,7 +134,7 @@
 </div>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="#read/2">read(name, current_time \\ Relocker.Utils.time())</a>
+    <a href="#read/2">read(name, current_time \\ Utils.time())</a>
   </div>
   
     <div class="summary-synopsis"><p>Read lock with name <code class="inline">lock_name</code>. Returns <code class="inline">{:ok, %Lock{}}</code> if successful</p>
@@ -146,16 +152,13 @@
 </div>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="#start_link/1">start_link(opts)</a>
+    <a href="#start_link/1">start_link(opts \\ [])</a>
   </div>
-  
-    <div class="summary-synopsis"><p>Start a locker process</p>
-</div>
   
 </div>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="#unlock/2">unlock(lock, current_time \\ Relocker.Utils.time())</a>
+    <a href="#unlock/2">unlock(lock, current_time \\ Utils.time())</a>
   </div>
   
     <div class="summary-synopsis"><p>Release a lock</p>
@@ -174,6 +177,12 @@
       <a href="#callbacks">Callbacks</a>
     </h2>
     <div class="summary-row">
+  <div class="summary-signature">
+    <a href="#c:child_spec/0">child_spec()</a>
+  </div>
+  
+</div>
+<div class="summary-row">
   <div class="summary-signature">
     <a href="#c:extend/2">extend(lock, current_time)</a>
   </div>
@@ -194,12 +203,6 @@
 <div class="summary-row">
   <div class="summary-signature">
     <a href="#c:reset/0">reset()</a>
-  </div>
-  
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="#c:start_link/1">start_link(opts)</a>
   </div>
   
 </div>
@@ -242,12 +245,25 @@
             </a>
             Functions
           </h1>
-          <div class="detail" id="extend/2">
+          <div class="detail" id="child_spec/0">
+  <div class="detail-header">
+    <a href="#child_spec/0" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">child_spec()</span>
+      
+  </div>
+  
+  <section class="docstring">
+    
+  </section>
+</div>
+<div class="detail" id="extend/2">
   <div class="detail-header">
     <a href="#extend/2" class="detail-link" title="Link to this function">
       <i class="icon-link"></i>
     </a>
-    <span class="signature">extend(lock, current_time \\ Relocker.Utils.time())</span>
+    <span class="signature">extend(lock, current_time \\ Utils.time())</span>
       
   </div>
   
@@ -274,7 +290,7 @@
     <a href="#lock/4" class="detail-link" title="Link to this function">
       <i class="icon-link"></i>
     </a>
-    <span class="signature">lock(name, metadata, lease_time_secs, current_time \\ Relocker.Utils.time())</span>
+    <span class="signature">lock(name, metadata, lease_time_secs, current_time \\ Utils.time())</span>
       
   </div>
   
@@ -288,7 +304,7 @@
     <a href="#read/2" class="detail-link" title="Link to this function">
       <i class="icon-link"></i>
     </a>
-    <span class="signature">read(name, current_time \\ Relocker.Utils.time())</span>
+    <span class="signature">read(name, current_time \\ Utils.time())</span>
       
   </div>
   
@@ -316,13 +332,12 @@
     <a href="#start_link/1" class="detail-link" title="Link to this function">
       <i class="icon-link"></i>
     </a>
-    <span class="signature">start_link(opts)</span>
+    <span class="signature">start_link(opts \\ [])</span>
       
   </div>
   
   <section class="docstring">
-    <p>Start a locker process</p>
-
+    
   </section>
 </div>
 <div class="detail" id="unlock/2">
@@ -330,7 +345,7 @@
     <a href="#unlock/2" class="detail-link" title="Link to this function">
       <i class="icon-link"></i>
     </a>
-    <span class="signature">unlock(lock, current_time \\ Relocker.Utils.time())</span>
+    <span class="signature">unlock(lock, current_time \\ Utils.time())</span>
       
   </div>
   
@@ -353,7 +368,29 @@
             </a>
             Callbacks
           </h1>
-          <div class="detail" id="c:extend/2">
+          <div class="detail" id="c:child_spec/0">
+  <div class="detail-header">
+    <a href="#c:child_spec/0" class="detail-link" title="Link to this callback">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">child_spec()</span>
+      
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">child_spec :: <a href="http://elixir-lang.org/docs/stable/elixir/Supervisor.Spec.html#t:spec/0">Supervisor.Spec.spec</a> | :none</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    
+  </section>
+</div>
+<div class="detail" id="c:extend/2">
   <div class="detail-header">
     <a href="#c:extend/2" class="detail-link" title="Link to this callback">
       <i class="icon-link"></i>
@@ -439,28 +476,6 @@
       <div class="specs-list">
         
           <pre><code class="elixir">reset :: :ok | :error</code></pre>
-        
-      </div>
-    </div>
-  
-  <section class="docstring">
-    
-  </section>
-</div>
-<div class="detail" id="c:start_link/1">
-  <div class="detail-header">
-    <a href="#c:start_link/1" class="detail-link" title="Link to this callback">
-      <i class="icon-link"></i>
-    </a>
-    <span class="signature">start_link(opts)</span>
-      
-  </div>
-  
-    <div class="specs">
-      <h4 class="specs-title">Specs</h4>
-      <div class="specs-list">
-        
-          <pre><code class="elixir">start_link(opts :: []) :: {:ok, pid}</code></pre>
         
       </div>
     </div>
