@@ -33,7 +33,7 @@ defmodule Relocker.Mixfile do
   # Type `mix help deps` for more examples and options
   defp deps do
     [
-      {:exredis, ">= 0.2.0" },
+      {:exredis, ">= 0.2.3" },
       {:poolboy, github: "devinus/poolboy", tag: "1.5.1"},
       {:ex_doc, "~> 0.9", only: :dev},
       {:earmark, ">= 0.0.0", only: :dev}
