@@ -1,6 +1,6 @@
 defmodule Relocker.Server do
 
-  @doc ~s"""
+  @moduledoc ~s"""
 
   See: https://github.com/tsharju/elixir_locker/blob/master/lib/elixir_locker/server.ex
 
@@ -39,21 +39,25 @@ defmodule Relocker.Server do
       use GenServer
 
       def start(args, opts \\ []) do
-        name = Keyword.get(opts, :name)
-        if name != nil do
+        if Keyword.has_key?(opts, :name) do
+          name = Keyword.get(opts, :name)
           opts = Keyword.put(opts, :name, {:via, Relocker.Registry, name})
           args = Keyword.put(args, :name, name)
+          GenServer.start(__MODULE__, args, opts)
+        else
+          GenServer.start(__MODULE__, args, opts)
         end
-        GenServer.start(__MODULE__, args, opts)
       end
 
       def start_link(args, opts \\ []) do
-        name = Keyword.get(opts, :name)
-        if name != nil do
+        if Keyword.has_key?(opts, :name) do
+          name = Keyword.get(opts, :name)
           opts = Keyword.put(opts, :name, {:via, Relocker.Registry, name})
           args = Keyword.put(args, :name, name)
+          GenServer.start_link(__MODULE__, args, opts)
+        else
+          GenServer.start_link(__MODULE__, args, opts)
         end
-        GenServer.start_link(__MODULE__, args, opts)
       end
 
       # GenServer API

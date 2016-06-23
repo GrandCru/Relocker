@@ -1,6 +1,5 @@
-%{"earmark": {:hex, :earmark, "0.1.17"},
-  "eredis": {:hex, :eredis, "1.0.8"},
-  "ex_doc": {:hex, :ex_doc, "0.10.0"},
-  "exredis": {:hex, :exredis, "0.2.3"},
-  "poolboy": {:git, "https://github.com/devinus/poolboy.git", "3bb48a893ff5598f7c73731ac17545206d259fac", [tag: "1.5.1"]},
-  "timex": {:hex, :timex, "0.13.5"}}
+%{"earmark": {:hex, :earmark, "0.2.1", "ba6d26ceb16106d069b289df66751734802777a3cbb6787026dd800ffeb850f3", [:mix], []},
+  "eredis": {:hex, :eredis, "1.0.8", "ab4fda1c4ba7fbe6c19c26c249dc13da916d762502c4b4fa2df401a8d51c5364", [:rebar], []},
+  "ex_doc": {:hex, :ex_doc, "0.12.0", "b774aabfede4af31c0301aece12371cbd25995a21bb3d71d66f5c2fe074c603f", [:mix], [{:earmark, "~> 0.2", [hex: :earmark, optional: false]}]},
+  "exredis": {:hex, :exredis, "0.2.4", "07f4ea69b5cf1912d62cea4599687fedb3efe19cced8ddf087ef63dd17447518", [:mix], [{:eredis, ">= 1.0.8", [hex: :eredis, optional: false]}]},
+  "poolboy": {:git, "https://github.com/devinus/poolboy.git", "3bb48a893ff5598f7c73731ac17545206d259fac", [tag: "1.5.1"]}}
